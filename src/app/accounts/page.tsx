@@ -3,8 +3,11 @@
 import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { AddAccountModal } from "@/components/AddAccountModal";
+import { EditAccountModal } from "@/components/EditAccountModal";
+import { ViewAccountModal } from "@/components/ViewAccountModal";
 import {
   accountsResponseToList,
+  deleteAccount,
   fetchAccounts,
 } from "@/lib/accounts-api";
 
@@ -69,6 +72,14 @@ function IconPencil({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} aria-hidden>
       <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
+    </svg>
+  );
+}
+
+function IconTrash({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} aria-hidden>
+      <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
     </svg>
   );
 }
@@ -142,7 +153,23 @@ function AccountTypeBadge({ value }: { value: string | undefined }) {
   );
 }
 
-function AccountCard({ account }: { account: Record<string, unknown> }) {
+function accountRowId(account: Record<string, unknown>): string | undefined {
+  if (typeof account.id === "string") return account.id;
+  if (typeof account.id === "number") return String(account.id);
+  return undefined;
+}
+
+function AccountCard({
+  account,
+  onView,
+  onEdit,
+  onDelete,
+}: {
+  account: Record<string, unknown>;
+  onView: (account: Record<string, unknown>) => void;
+  onEdit: (account: Record<string, unknown>) => void;
+  onDelete: (account: Record<string, unknown>) => void;
+}) {
   const name =
     accountString(account, "account_name") ||
     accountString(account, "name") ||
@@ -150,6 +177,7 @@ function AccountCard({ account }: { account: Record<string, unknown> }) {
 
   const moveType = accountString(account, "account_move_type");
   const accType = accountString(account, "account_type");
+  const rowId = accountRowId(account);
 
   return (
     <article className="flex flex-col rounded-xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
@@ -160,19 +188,32 @@ function AccountCard({ account }: { account: Record<string, unknown> }) {
         <div className="flex shrink-0 gap-1">
           <button
             type="button"
+            onClick={() => onView(account)}
             className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-zinc-600 transition hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
             aria-label="View details"
-            title="View details (coming soon)"
+            title="View details"
           >
             <IconEye className="h-4 w-4" />
           </button>
           <button
             type="button"
-            className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-zinc-600 transition hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
+            onClick={() => onEdit(account)}
+            disabled={!rowId}
+            className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-zinc-600 transition hover:bg-zinc-100 hover:text-zinc-900 disabled:cursor-not-allowed disabled:opacity-40 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
             aria-label="Edit account"
-            title="Edit (coming soon)"
+            title={rowId ? "Edit account" : "Missing account id"}
           >
             <IconPencil className="h-4 w-4" />
+          </button>
+          <button
+            type="button"
+            onClick={() => onDelete(account)}
+            disabled={!rowId}
+            className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-zinc-600 transition hover:bg-rose-50 hover:text-rose-700 disabled:cursor-not-allowed disabled:opacity-40 dark:text-zinc-400 dark:hover:bg-rose-950/40 dark:hover:text-rose-400"
+            aria-label="Delete account"
+            title={rowId ? "Delete account" : "Missing account id"}
+          >
+            <IconTrash className="h-4 w-4" />
           </button>
         </div>
       </div>
@@ -192,6 +233,14 @@ export default function AccountsPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [addOpen, setAddOpen] = useState(false);
+  const [editAccount, setEditAccount] = useState<Record<
+    string,
+    unknown
+  > | null>(null);
+  const [viewAccount, setViewAccount] = useState<Record<
+    string,
+    unknown
+  > | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -223,6 +272,47 @@ export default function AccountsPage() {
   useEffect(() => {
     void load();
   }, [load]);
+
+  const handleDeleteAccount = useCallback(
+    async (account: Record<string, unknown>) => {
+      const id = accountRowId(account);
+      if (!id) return;
+      const label =
+        accountString(account, "account_name") ||
+        accountString(account, "name") ||
+        id;
+      if (
+        !window.confirm(
+          `Delete account "${label}"? This cannot be undone.`,
+        )
+      ) {
+        return;
+      }
+      try {
+        await deleteAccount(id);
+        setViewAccount((v) => (v && accountRowId(v) === id ? null : v));
+        setEditAccount((e) => (e && accountRowId(e) === id ? null : e));
+        await load();
+      } catch (err) {
+        let msg = "Could not delete account.";
+        if (axios.isAxiosError(err)) {
+          const raw =
+            err.response?.data &&
+            typeof err.response.data === "object" &&
+            "message" in err.response.data &&
+            typeof (err.response.data as { message: unknown }).message ===
+              "string"
+              ? (err.response.data as { message: string }).message
+              : err.response?.statusText || err.message;
+          if (typeof raw === "string") msg = raw;
+        } else if (err instanceof Error) {
+          msg = err.message;
+        }
+        window.alert(msg);
+      }
+    },
+    [load],
+  );
 
   return (
     <div className="flex min-h-full flex-1 flex-col gap-6 bg-zinc-50 px-6 py-8 dark:bg-zinc-950">
@@ -261,6 +351,25 @@ export default function AccountsPage() {
         onCreated={() => void load()}
       />
 
+      <ViewAccountModal
+        open={viewAccount !== null}
+        onClose={() => setViewAccount(null)}
+        account={viewAccount}
+        accounts={accounts ?? []}
+        onEditFromView={(acc) => {
+          setViewAccount(null);
+          setEditAccount(acc);
+        }}
+      />
+
+      <EditAccountModal
+        open={editAccount !== null}
+        onClose={() => setEditAccount(null)}
+        account={editAccount}
+        accounts={accounts ?? []}
+        onUpdated={() => void load()}
+      />
+
       {error ? (
         <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900 dark:border-red-900 dark:bg-red-950/40 dark:text-red-200">
           {error}
@@ -286,6 +395,9 @@ export default function AccountsPage() {
                 `account-${index}`
               }
               account={account}
+              onView={setViewAccount}
+              onEdit={setEditAccount}
+              onDelete={handleDeleteAccount}
             />
           ))}
         </div>

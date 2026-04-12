@@ -40,6 +40,45 @@ export async function createAccount(
   return data;
 }
 
+/** PUT /account/{id} — Bearer token, matches Pyxis Postman "update account". */
+export async function updateAccount(
+  id: string,
+  body: CreateAccountBody,
+): Promise<unknown> {
+  const session = getSession();
+  if (!session) {
+    throw new Error("Not authenticated");
+  }
+  const { data } = await axios.put(
+    `${getApiBaseUrl()}/account/${encodeURIComponent(id)}`,
+    body,
+    {
+      headers: {
+        Authorization: `Bearer ${session.token}`,
+        "Content-Type": "application/json",
+      },
+    },
+  );
+  return data;
+}
+
+/** DELETE /account/{id} — Bearer token, matches Pyxis Postman "delete account". */
+export async function deleteAccount(id: string): Promise<unknown> {
+  const session = getSession();
+  if (!session) {
+    throw new Error("Not authenticated");
+  }
+  const { data } = await axios.delete(
+    `${getApiBaseUrl()}/account/${encodeURIComponent(id)}`,
+    {
+      headers: {
+        Authorization: `Bearer ${session.token}`,
+      },
+    },
+  );
+  return data;
+}
+
 export function accountsResponseToList(data: unknown): Record<string, unknown>[] {
   if (Array.isArray(data)) {
     return data.filter((x): x is Record<string, unknown> => !!x && typeof x === "object");
