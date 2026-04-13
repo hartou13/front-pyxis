@@ -22,6 +22,14 @@ function IconAccounts({ className }: { className?: string }) {
   );
 }
 
+function IconTransactions({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" aria-hidden>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 21h9m0 0V3.75M16.5 21h2.25A2.25 2.25 0 0020.25 18.75V2.25A2.25 2.25 0 0018 0h-2.25m0 21H7.5m9-18v18m-10.875-2.625A2.625 2.625 0 115.25 15.375a2.625 2.625 0 013.75 3.75z" />
+    </svg>
+  );
+}
+
 function IconChevronLeft({ className }: { className?: string }) {
   return (
     <svg className={className} fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" aria-hidden>
@@ -41,6 +49,7 @@ function IconChevronRight({ className }: { className?: string }) {
 const nav = [
   { href: "/welcome", label: "Welcome", Icon: IconHome },
   { href: "/accounts", label: "Accounts", Icon: IconAccounts },
+  { href: "/transactions", label: "Transactions", Icon: IconTransactions },
 ] as const;
 
 export function AppSidebar() {
