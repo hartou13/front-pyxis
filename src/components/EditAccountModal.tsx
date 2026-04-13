@@ -51,7 +51,7 @@ export function EditAccountModal({
   const [accountType, setAccountType] = useState<"external" | "personal">(
     "personal",
   );
-  const [superAccountId, setSuperAccountId] = useState("");
+  const [superAccountId, setSuperAccountId] = useState<string | null >("");
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -66,7 +66,7 @@ export function EditAccountModal({
     setMoveType(parseMoveType(account.account_move_type));
     setAccountType(parseAccountType(account.account_type));
     const superId = accountString(account, "super_account_id");
-    setSuperAccountId(superId ?? "");
+    setSuperAccountId(superId ?? null);
   }, [open, account]);
 
   useEffect(() => {
@@ -219,7 +219,7 @@ export function EditAccountModal({
             </label>
             <select
               id="edit-super-account"
-              value={superAccountId}
+              value={superAccountId ?? ""}
               onChange={(e) => setSuperAccountId(e.target.value)}
               className={selectClass}
             >

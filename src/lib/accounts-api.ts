@@ -20,7 +20,7 @@ export type CreateAccountBody = {
   account_name: string;
   account_move_type: string;
   account_type: string;
-  super_account_id: string;
+  super_account_id: string | null;
 };
 
 /** POST /account — Bearer token, matches Pyxis Postman "create account". */
