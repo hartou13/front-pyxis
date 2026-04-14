@@ -22,9 +22,11 @@ function getNumber(obj: Record<string, unknown>, key: string): number | undefine
 }
 
 function formatCurrency(amount: number, isOutgoing: boolean): string {
-  const formatter = new Intl.NumberFormat("en-US", {
+  const formatter = new Intl.NumberFormat("fr-FR", {
     style: "currency",
-    currency: "USD",
+    currency: "MGA",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
   });
   const formatted = formatter.format(Math.abs(amount));
   return isOutgoing ? `-${formatted}` : `+${formatted}`;

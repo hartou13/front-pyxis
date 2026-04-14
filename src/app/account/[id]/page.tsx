@@ -142,6 +142,18 @@ function formatDate(dateString: string | undefined): string {
   }
 }
 
+function formatCurrency(amount: number | undefined | null): string {
+  if (typeof amount === "number") {
+    return new Intl.NumberFormat("fr-FR", {
+      style: "currency",
+      currency: "MGA",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount);
+  }
+  return "—";
+}
+
 interface Account {
   id: string;
   user_id: string;
@@ -567,10 +579,7 @@ export default function AccountDetailPage() {
                 : "text-red-600 dark:text-red-400"
             }`}
           >
-            {new Intl.NumberFormat("en-US", {
-              style: "currency",
-              currency: "USD",
-            }).format(solde)}
+            {formatCurrency(solde)}
           </p>
         ) : null}
       </div>

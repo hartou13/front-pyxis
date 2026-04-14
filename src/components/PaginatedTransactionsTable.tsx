@@ -13,9 +13,11 @@ function formatDate(dateString: string | undefined): string {
 
 function formatCurrency(amount: unknown): string {
   if (typeof amount === "number") {
-    return new Intl.NumberFormat("en-US", {
+    return new Intl.NumberFormat("fr-FR", {
       style: "currency",
-      currency: "USD",
+      currency: "MGA",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
     }).format(amount);
   }
   return String(amount ?? "—");
