@@ -1,10 +1,10 @@
 "use client";
 
 import axios from "axios";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { AddAccountModal } from "@/components/AddAccountModal";
 import { EditAccountModal } from "@/components/EditAccountModal";
-import { ViewAccountModal } from "@/components/ViewAccountModal";
 import {
   accountsResponseToList,
   deleteAccount,
@@ -166,7 +166,7 @@ function AccountCard({
   onDelete,
 }: {
   account: Record<string, unknown>;
-  onView: (account: Record<string, unknown>) => void;
+  onView: (id: string) => void;
   onEdit: (account: Record<string, unknown>) => void;
   onDelete: (account: Record<string, unknown>) => void;
 }) {
@@ -188,10 +188,11 @@ function AccountCard({
         <div className="flex shrink-0 gap-1">
           <button
             type="button"
-            onClick={() => onView(account)}
-            className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-zinc-600 transition hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
+            onClick={() => rowId && onView(rowId)}
+            disabled={!rowId}
+            className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-zinc-600 transition hover:bg-zinc-100 hover:text-zinc-900 disabled:cursor-not-allowed disabled:opacity-40 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
             aria-label="View details"
-            title="View details"
+            title={rowId ? "View details" : "Missing account id"}
           >
             <IconEye className="h-4 w-4" />
           </button>
@@ -227,6 +228,7 @@ function AccountCard({
 }
 
 export default function AccountsPage() {
+  const router = useRouter();
   const [accounts, setAccounts] = useState<Record<string, unknown>[] | null>(
     null,
   );
@@ -234,10 +236,6 @@ export default function AccountsPage() {
   const [loading, setLoading] = useState(true);
   const [addOpen, setAddOpen] = useState(false);
   const [editAccount, setEditAccount] = useState<Record<
-    string,
-    unknown
-  > | null>(null);
-  const [viewAccount, setViewAccount] = useState<Record<
     string,
     unknown
   > | null>(null);
@@ -290,7 +288,6 @@ export default function AccountsPage() {
       }
       try {
         await deleteAccount(id);
-        setViewAccount((v) => (v && accountRowId(v) === id ? null : v));
         setEditAccount((e) => (e && accountRowId(e) === id ? null : e));
         await load();
       } catch (err) {
@@ -351,17 +348,6 @@ export default function AccountsPage() {
         onCreated={() => void load()}
       />
 
-      <ViewAccountModal
-        open={viewAccount !== null}
-        onClose={() => setViewAccount(null)}
-        account={viewAccount}
-        accounts={accounts ?? []}
-        onEditFromView={(acc) => {
-          setViewAccount(null);
-          setEditAccount(acc);
-        }}
-      />
-
       <EditAccountModal
         open={editAccount !== null}
         onClose={() => setEditAccount(null)}
@@ -395,7 +381,7 @@ export default function AccountsPage() {
                 `account-${index}`
               }
               account={account}
-              onView={setViewAccount}
+              onView={(id) => router.push(`/account/${id}`)}
               onEdit={setEditAccount}
               onDelete={handleDeleteAccount}
             />

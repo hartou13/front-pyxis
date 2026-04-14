@@ -16,6 +16,59 @@ export async function fetchAccounts(): Promise<unknown> {
   return data;
 }
 
+/** GET /account/{id} — Bearer token, fetch a single account with sub_accounts */
+export async function fetchAccount(id: string): Promise<unknown> {
+  const session = getSession();
+  if (!session) {
+    throw new Error("Not authenticated");
+  }
+  const { data } = await axios.get(`${getApiBaseUrl()}/account/${encodeURIComponent(id)}`, {
+    headers: {
+      Authorization: `Bearer ${session.token}`,
+    },
+  });
+  return data;
+}
+
+/** GET /account/{id}/move-history — Bearer token, fetch move history for an account with pagination */
+export async function fetchAccountMoveHistory(id: string, page?: number, limit?: number): Promise<unknown> {
+  const session = getSession();
+  if (!session) {
+    throw new Error("Not authenticated");
+  }
+  const params = new URLSearchParams();
+  if (page !== undefined) {
+    params.append("page", String(page));
+  }
+  if (limit !== undefined) {
+    params.append("limit", String(limit));
+  }
+  const query = params.toString();
+  const url = query
+    ? `${getApiBaseUrl()}/account/${encodeURIComponent(id)}/move-history?${query}`
+    : `${getApiBaseUrl()}/account/${encodeURIComponent(id)}/move-history`;
+  const { data } = await axios.get(url, {
+    headers: {
+      Authorization: `Bearer ${session.token}`,
+    },
+  });
+  return data;
+}
+
+/** GET /account/{id}/solde — Bearer token, fetch account balance */
+export async function fetchAccountSolde(id: string): Promise<unknown> {
+  const session = getSession();
+  if (!session) {
+    throw new Error("Not authenticated");
+  }
+  const { data } = await axios.get(`${getApiBaseUrl()}/account/${encodeURIComponent(id)}/solde`, {
+    headers: {
+      Authorization: `Bearer ${session.token}`,
+    },
+  });
+  return data;
+}
+
 export type CreateAccountBody = {
   account_name: string;
   account_move_type: string;
