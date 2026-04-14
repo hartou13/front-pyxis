@@ -191,6 +191,9 @@ export default function TransactionsPage() {
   );
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [total, setTotal] = useState(0);
   const [viewTransactionId, setViewTransactionId] = useState<string | undefined>(undefined);
   const [addOpen, setAddOpen] = useState(false);
   const [deleteTransaction, setDeleteTransaction] = useState<Record<
@@ -202,12 +205,25 @@ export default function TransactionsPage() {
     unknown
   > | null>(null);
 
-  const load = useCallback(async () => {
+  const load = useCallback(async (page: number = 1, limit: number = 10) => {
     setLoading(true);
     setError(null);
     try {
-      const raw = await fetchTransactions();
+      const raw = await fetchTransactions(page, limit);
       setTransactions(transactionsResponseToList(raw));
+      setCurrentPage(page);
+      setPageSize(limit);
+
+      // Extract pagination metadata if available
+      if (raw && typeof raw === "object") {
+        const o = raw as Record<string, unknown>;
+        if (typeof o.total === "number") {
+          setTotal(o.total);
+        }
+        if (typeof o.pageSize === "number") {
+          setPageSize(o.pageSize);
+        }
+      }
     } catch (err) {
       if (axios.isAxiosError(err)) {
         const msg =
@@ -230,7 +246,7 @@ export default function TransactionsPage() {
   }, []);
 
   useEffect(() => {
-    void load();
+    void load(1, 10);
   }, [load]);
 
   return (
@@ -254,7 +270,7 @@ export default function TransactionsPage() {
           </button>
           <button
             type="button"
-            onClick={() => void load()}
+            onClick={() => void load(currentPage, pageSize)}
             disabled={loading}
             className="rounded-lg border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-900 transition hover:bg-zinc-50 disabled:opacity-50 dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800"
           >
@@ -266,21 +282,21 @@ export default function TransactionsPage() {
       <AddTransactionModal
         open={addOpen}
         onClose={() => setAddOpen(false)}
-        onCreated={() => void load()}
+        onCreated={() => void load(1, pageSize)}
       />
 
       <EditTransactionModal
         open={editTransaction !== null}
         transaction={editTransaction}
         onClose={() => setEditTransaction(null)}
-        onUpdated={() => void load()}
+        onUpdated={() => void load(currentPage, pageSize)}
       />
 
       <DeleteTransactionModal
         open={deleteTransaction !== null}
         transaction={deleteTransaction}
         onClose={() => setDeleteTransaction(null)}
-        onDeleted={() => void load()}
+        onDeleted={() => void load(currentPage, pageSize)}
       />
 
       {error ? (
@@ -308,46 +324,109 @@ export default function TransactionsPage() {
       />
 
       {transactions && transactions.length > 0 ? (
-        <div className="overflow-x-auto rounded-lg border border-zinc-200 dark:border-zinc-800">
-          <table className="w-full text-sm">
-            <thead className="border-b border-zinc-200 bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-800">
-              <tr>
-                <th className="px-4 py-3 text-left font-semibold text-zinc-900 dark:text-zinc-50">
-                  Description
-                </th>
-                <th className="px-4 py-3 text-left font-semibold text-zinc-900 dark:text-zinc-50">
-                  From Account
-                </th>
-                <th className="px-4 py-3 text-left font-semibold text-zinc-900 dark:text-zinc-50">
-                  To Account
-                </th>
-                <th className="px-4 py-3 text-right font-semibold text-zinc-900 dark:text-zinc-50">
-                  Amount
-                </th>
-                <th className="px-4 py-3 text-left font-semibold text-zinc-900 dark:text-zinc-50">
-                  Date
-                </th>
-                <th className="px-4 py-3 text-right font-semibold text-zinc-900 dark:text-zinc-50">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-zinc-200 bg-white dark:divide-zinc-800 dark:bg-zinc-900">
-              {transactions.map((transaction, index) => (
-                <TransactionRow
-                  key={
-                    (typeof transaction.id === "string" && transaction.id) ||
-                    `transaction-${index}`
-                  }
-                  transaction={transaction}
-                  onView={setViewTransactionId}
-                  onEdit={setEditTransaction}
-                  onDelete={setDeleteTransaction}
-                />
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <>
+          <div className="overflow-x-auto rounded-lg border border-zinc-200 dark:border-zinc-800">
+            <table className="w-full text-sm">
+              <thead className="border-b border-zinc-200 bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-800">
+                <tr>
+                  <th className="px-4 py-3 text-left font-semibold text-zinc-900 dark:text-zinc-50">
+                    Description
+                  </th>
+                  <th className="px-4 py-3 text-left font-semibold text-zinc-900 dark:text-zinc-50">
+                    From Account
+                  </th>
+                  <th className="px-4 py-3 text-left font-semibold text-zinc-900 dark:text-zinc-50">
+                    To Account
+                  </th>
+                  <th className="px-4 py-3 text-right font-semibold text-zinc-900 dark:text-zinc-50">
+                    Amount
+                  </th>
+                  <th className="px-4 py-3 text-left font-semibold text-zinc-900 dark:text-zinc-50">
+                    Date
+                  </th>
+                  <th className="px-4 py-3 text-right font-semibold text-zinc-900 dark:text-zinc-50">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-zinc-200 bg-white dark:divide-zinc-800 dark:bg-zinc-900">
+                {transactions.map((transaction, index) => (
+                  <TransactionRow
+                    key={
+                      (typeof transaction.id === "string" && transaction.id) ||
+                      `transaction-${index}`
+                    }
+                    transaction={transaction}
+                    onView={setViewTransactionId}
+                    onEdit={setEditTransaction}
+                    onDelete={setDeleteTransaction}
+                  />
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="flex items-center justify-between rounded-lg border border-zinc-200 bg-white px-4 py-3 dark:border-zinc-800 dark:bg-zinc-900">
+            <div className="flex items-center gap-4">
+              <div>
+                <label htmlFor="pageSize" className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                  Items per page:
+                </label>
+                <select
+                  id="pageSize"
+                  value={pageSize}
+                  onChange={(e) => void load(1, Number(e.target.value))}
+                  disabled={loading}
+                  className="ml-2 rounded border border-zinc-300 bg-white px-2 py-1 text-sm text-zinc-900 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100"
+                >
+                  <option value={5}>5</option>
+                  <option value={10}>10</option>
+                  <option value={25}>25</option>
+                  <option value={50}>50</option>
+                </select>
+              </div>
+              <div className="text-sm text-zinc-600 dark:text-zinc-400">
+                {total > 0 ? `${(currentPage - 1) * pageSize + 1}–${Math.min(currentPage * pageSize, total)} of ${total}` : "No items"}
+              </div>
+            </div>
+
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => void load(currentPage - 1, pageSize)}
+                disabled={loading || currentPage <= 1}
+                className="rounded border border-zinc-300 bg-white px-3 py-1 text-sm font-medium text-zinc-900 transition hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800"
+              >
+                Previous
+              </button>
+              <div className="flex items-center gap-1">
+                {Array.from({ length: Math.ceil(total / pageSize) }, (_, i) => i + 1).map((page) => (
+                  <button
+                    key={page}
+                    type="button"
+                    onClick={() => void load(page, pageSize)}
+                    disabled={loading}
+                    className={`h-8 w-8 rounded text-sm font-medium transition ${
+                      page === currentPage
+                        ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900"
+                        : "border border-zinc-300 bg-white text-zinc-900 hover:bg-zinc-50 dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800"
+                    } disabled:cursor-not-allowed disabled:opacity-50`}
+                  >
+                    {page}
+                  </button>
+                ))}
+              </div>
+              <button
+                type="button"
+                onClick={() => void load(currentPage + 1, pageSize)}
+                disabled={loading || currentPage >= Math.ceil(total / pageSize)}
+                className="rounded border border-zinc-300 bg-white px-3 py-1 text-sm font-medium text-zinc-900 transition hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        </>
       ) : null}
     </div>
   );

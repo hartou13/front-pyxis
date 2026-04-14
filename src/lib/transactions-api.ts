@@ -2,13 +2,22 @@ import axios from "axios";
 import { getApiBaseUrl } from "@/lib/auth-client";
 import { getSession } from "@/lib/session";
 
-/** GET /move — Bearer token, fetch all transactions */
-export async function fetchTransactions(): Promise<unknown> {
+/** GET /move — Bearer token, fetch all transactions with optional pagination */
+export async function fetchTransactions(page?: number, limit?: number): Promise<unknown> {
   const session = getSession();
   if (!session) {
     throw new Error("Not authenticated");
   }
-  const { data } = await axios.get(`${getApiBaseUrl()}/move`, {
+  const params = new URLSearchParams();
+  if (page !== undefined) {
+    params.append("page", String(page));
+  }
+  if (limit !== undefined) {
+    params.append("limit", String(limit));
+  }
+  const query = params.toString();
+  const url = query ? `${getApiBaseUrl()}/move?${query}` : `${getApiBaseUrl()}/move`;
+  const { data } = await axios.get(url, {
     headers: {
       Authorization: `Bearer ${session.token}`,
     },
