@@ -69,6 +69,48 @@ export async function fetchAccountSolde(id: string): Promise<unknown> {
   return data;
 }
 
+/** GET /account/{id}/tendency — Bearer token, fetch monthly balance tendency */
+export async function fetchAccountTendency(id: string): Promise<unknown> {
+  const session = getSession();
+  if (!session) {
+    throw new Error("Not authenticated");
+  }
+  const { data } = await axios.get(`${getApiBaseUrl()}/account/${encodeURIComponent(id)}/tendency`, {
+    headers: {
+      Authorization: `Bearer ${session.token}`,
+    },
+  });
+  return data;
+}
+
+/** GET /account/{id}/week-tendency — Bearer token, fetch weekly balance tendency */
+export async function fetchAccountWeekTendency(id: string): Promise<unknown> {
+  const session = getSession();
+  if (!session) {
+    throw new Error("Not authenticated");
+  }
+  const { data } = await axios.get(`${getApiBaseUrl()}/account/${encodeURIComponent(id)}/week-tendency`, {
+    headers: {
+      Authorization: `Bearer ${session.token}`,
+    },
+  });
+  return data;
+}
+
+/** GET /account/{id}/day-tendency — Bearer token, fetch daily balance tendency */
+export async function fetchAccountDayTendency(id: string): Promise<unknown> {
+  const session = getSession();
+  if (!session) {
+    throw new Error("Not authenticated");
+  }
+  const { data } = await axios.get(`${getApiBaseUrl()}/account/${encodeURIComponent(id)}/day-tendency`, {
+    headers: {
+      Authorization: `Bearer ${session.token}`,
+    },
+  });
+  return data;
+}
+
 export type CreateAccountBody = {
   account_name: string;
   account_move_type: string;
@@ -149,4 +191,21 @@ export function accountsResponseToList(data: unknown): Record<string, unknown>[]
     }
   }
   return [];
+}
+
+/** GET /solde/evolution — Bearer token, fetch account balances with filtering by date range */
+export async function fetchSoldeEvolution(startDate: string, endDate: string): Promise<unknown> {
+  const session = getSession();
+  if (!session) {
+    throw new Error("Not authenticated");
+  }
+  const params = new URLSearchParams();
+  params.append("start_date", startDate);
+  params.append("end_date", endDate);
+  const { data } = await axios.get(`${getApiBaseUrl()}/solde/evolution?${params.toString()}`, {
+    headers: {
+      Authorization: `Bearer ${session.token}`,
+    },
+  });
+  return data;
 }

@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { getApiBaseUrl } from "@/lib/auth-client";
 import { getSession } from "@/lib/session";
+import { fetchSoldeEvolution } from "@/lib/accounts-api";
 
 function formatCurrency(amount: number | undefined | null): string {
   if (typeof amount === "number") {
@@ -80,11 +81,48 @@ interface AccountBalance {
   } | null;
 }
 
+interface EvolutionAccount {
+  id: string;
+  super_account_id: string | null;
+  account_name: string;
+  account_move_type: string;
+  account_type: string;
+  solde: {
+    id: string;
+    account_name: string;
+    account_move_type: string;
+    balance: number;
+  };
+}
+
+interface SoldeEvolution {
+  income: EvolutionAccount[];
+  expense: EvolutionAccount[];
+  movement: EvolutionAccount[];
+}
+
 export default function WelcomePage() {
   const router = useRouter();
   const [accounts, setAccounts] = useState<AccountBalance[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+
+  // Evolution filters and data
+  const [startDate, setStartDate] = useState(() => {
+    const date = new Date();
+    date.setMonth(date.getMonth() - 1);
+    return date.toISOString().split("T")[0];
+  });
+  const [evolution, setEvolution] = useState<SoldeEvolution | null>(null);
+  const [evolutionError, setEvolutionError] = useState<string | null>(null);
+  const [evolutionLoading, setEvolutionLoading] = useState(false);
+
+  // Get end date as tomorrow
+  const getEndDate = (): string => {
+    const date = new Date();
+    date.setDate(date.getDate() + 1);
+    return date.toISOString().split("T")[0];
+  };
 
   const loadBalances = useCallback(async () => {
     setLoading(true);
@@ -108,9 +146,9 @@ export default function WelcomePage() {
       if (axios.isAxiosError(err)) {
         const msg =
           err.response?.data &&
-          typeof err.response.data === "object" &&
-          "message" in err.response.data &&
-          typeof (err.response.data as { message: unknown }).message === "string"
+            typeof err.response.data === "object" &&
+            "message" in err.response.data &&
+            typeof (err.response.data as { message: unknown }).message === "string"
             ? (err.response.data as { message: string }).message
             : err.response?.statusText || err.message;
         setError(typeof msg === "string" ? msg : "Failed to load balances.");
@@ -125,19 +163,78 @@ export default function WelcomePage() {
     }
   }, []);
 
+  const loadEvolution = useCallback(async () => {
+    setEvolutionLoading(true);
+    setEvolutionError(null);
+    try {
+      const startISO = `${startDate}T00:00`;
+      const endISO = `${getEndDate()}T00:00`;
+      const data = await fetchSoldeEvolution(startISO, endISO);
+      if (data && typeof data === "object") {
+        const evo = data as Record<string, unknown>;
+        setEvolution({
+          income: Array.isArray(evo.income)
+            ? evo.income.filter((x): x is EvolutionAccount => !!x && typeof x === "object")
+            : [],
+          expense: Array.isArray(evo.expense)
+            ? evo.expense.filter((x): x is EvolutionAccount => !!x && typeof x === "object")
+            : [],
+          movement: Array.isArray(evo.movement)
+            ? evo.movement.filter((x): x is EvolutionAccount => !!x && typeof x === "object")
+            : [],
+        });
+      }
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        const msg =
+          err.response?.data &&
+            typeof err.response.data === "object" &&
+            "message" in err.response.data &&
+            typeof (err.response.data as { message: unknown }).message === "string"
+            ? (err.response.data as { message: string }).message
+            : err.response?.statusText || err.message;
+        setEvolutionError(typeof msg === "string" ? msg : "Failed to load evolution data.");
+      } else if (err instanceof Error) {
+        setEvolutionError(err.message);
+      } else {
+        setEvolutionError("Failed to load evolution data.");
+      }
+      setEvolution(null);
+    } finally {
+      setEvolutionLoading(false);
+    }
+  }, [startDate]);
+
   useEffect(() => {
     void loadBalances();
   }, [loadBalances]);
 
+  useEffect(() => {
+    void loadEvolution();
+  }, [loadEvolution]);
+
   return (
     <div className="flex min-h-full flex-1 flex-col gap-6 bg-zinc-50 px-6 py-8 dark:bg-zinc-950">
-      <div>
-        <h1 className="text-3xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
-          Welcome
-        </h1>
-        <p className="mt-1 text-zinc-600 dark:text-zinc-400">
-          You are signed in.
-        </p>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h1 className="text-3xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
+            Welcome
+          </h1>
+
+        </div>
+
+        {/* Start Date Filter */}
+        <div>
+          <label className="block text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-1">
+            Start Date
+          </label>
+          <input
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-100"
+          />
+        </div>
       </div>
 
       {error ? (
@@ -146,58 +243,195 @@ export default function WelcomePage() {
         </p>
       ) : null}
 
-      {loading && accounts === null ? (
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">Loading account balances…</p>
-      ) : null}
-
-      {!loading && accounts && accounts.length > 0 ? (
-        <div className="overflow-x-auto rounded-lg border border-zinc-200 dark:border-zinc-800">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-zinc-200 bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-900">
-                <th className="px-6 py-3 text-left font-semibold text-zinc-900 dark:text-zinc-50">
-                  Account Name
-                </th>
-                <th className="px-6 py-3 text-left font-semibold text-zinc-900 dark:text-zinc-50">
-                  Type
-                </th>
-                <th className="px-6 py-3 text-right font-semibold text-zinc-900 dark:text-zinc-50">
-                  Balance
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {accounts.map((account) => (
-                <tr
-                  key={account.id}
-                  className="border-b border-zinc-200 hover:bg-zinc-50 dark:border-zinc-800 dark:hover:bg-zinc-900/50"
-                >
-                  <td className="px-6 py-4 text-zinc-900 dark:text-zinc-50">
-                    <button
-                      type="button"
-                      onClick={() => router.push(`/account/${account.id}`)}
-                      className="text-zinc-600 hover:text-zinc-900 hover:underline dark:text-zinc-400 dark:hover:text-zinc-100"
-                    >
-                      {account.account_name}
-                    </button>
-                  </td>
-                  <td className="px-6 py-4">
-                    <AccountTypeBadge value={account.account_type} />
-                  </td>
-                  <td className="px-6 py-4 text-right font-medium text-zinc-900 dark:text-zinc-50">
-                    {formatCurrency(account.solde?.remaining ?? 0)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      ) : null}
-
-      {!loading && accounts && accounts.length === 0 ? (
-        <p className="text-sm text-zinc-600 dark:text-zinc-400">
-          No accounts found.
+      {evolutionError ? (
+        <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900 dark:border-red-900 dark:bg-red-950/40 dark:text-red-200">
+          {evolutionError}
         </p>
+      ) : null}
+
+      {/* Merged Accounts Table with Evolution Data */}
+      {!loading && accounts && accounts.length > 0 ? (
+        <div>
+          <div className="grid gap-6 lg:grid-cols-3">
+            {/* All Accounts with Movement Evolution */}
+            <div>
+              <h2 className="mb-3 text-lg font-semibold text-zinc-900 dark:text-zinc-50">Accounts</h2>
+              <div className="overflow-x-auto rounded-lg border border-zinc-200 dark:border-zinc-800">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-zinc-200 bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-900">
+                      <th className="px-6 py-3 text-left font-semibold text-zinc-900 dark:text-zinc-50">
+                        Account Name
+                      </th>
+                      <th className="px-6 py-3 text-left font-semibold text-zinc-900 dark:text-zinc-50">
+                        Type
+                      </th>
+                      <th className="px-6 py-3 text-right font-semibold text-zinc-900 dark:text-zinc-50">
+                        Evolution
+                      </th>
+                      <th className="px-6 py-3 text-right font-semibold text-zinc-900 dark:text-zinc-50">
+                        Balance
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {accounts.map((account) => {
+                      const movementAccount = evolution?.movement.find((m) => m.id === account.id);
+                      return (
+                        <tr
+                          key={account.id}
+                          className="border-b border-zinc-200 hover:bg-zinc-50 dark:border-zinc-800 dark:hover:bg-zinc-900/50"
+                        >
+                          <td className="px-6 py-4 text-zinc-900 dark:text-zinc-50">
+                            <button
+                              type="button"
+                              onClick={() => router.push(`/account/${account.id}`)}
+                              className="text-zinc-600 hover:text-zinc-900 hover:underline dark:text-zinc-400 dark:hover:text-zinc-100"
+                            >
+                              {account.account_name}
+                            </button>
+                          </td>
+                          <td className="px-6 py-4">
+                            <AccountTypeBadge value={account.account_type} />
+                          </td>
+                          <td className="px-6 py-4 text-right font-medium text-zinc-900 dark:text-zinc-50">
+                            {movementAccount ? formatCurrency(movementAccount.solde?.balance) : "—"}
+                          </td>
+                          <td className="px-6 py-4 text-right font-medium text-zinc-900 dark:text-zinc-50">
+                            {formatCurrency(account.solde?.remaining ?? 0)}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                    <tr className="border-t-2 border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900/50">
+                      <td colSpan={2} className="px-6 py-3 font-semibold text-zinc-900 dark:text-zinc-50">
+                        Total
+                      </td>
+                      <td className="px-6 py-3 text-right font-semibold text-zinc-900 dark:text-zinc-50">
+                        {formatCurrency(
+                          evolution?.movement.reduce((sum, acc) => sum + (acc.solde?.balance ?? 0), 0) ?? 0
+                        )}
+                      </td>
+                      <td className="px-6 py-3 text-right font-semibold text-zinc-900 dark:text-zinc-50">
+                        {formatCurrency(
+                          accounts.reduce((sum, acc) => sum + (acc.solde?.remaining ?? 0), 0)
+                        )}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Income Accounts */}
+            {evolution && evolution.income.length > 0 && (
+              <div>
+                <h3 className="mb-3 text-lg font-semibold text-zinc-900 dark:text-zinc-50">Income</h3>
+                <div className="overflow-x-auto rounded-lg border border-zinc-200 dark:border-zinc-800">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-zinc-200 bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-900">
+                        <th className="px-6 py-3 text-left font-semibold text-zinc-900 dark:text-zinc-50">
+                          Account Name
+                        </th>
+                        <th className="px-6 py-3 text-right font-semibold text-zinc-900 dark:text-zinc-50">
+                          Balance
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {evolution.income.map((account) => (
+                        <tr
+                          key={account.id}
+                          className="border-b border-zinc-200 hover:bg-zinc-50 dark:border-zinc-800 dark:hover:bg-zinc-900/50"
+                        >
+                          <td className="px-6 py-4 text-zinc-900 dark:text-zinc-50">
+                            <button
+                              type="button"
+                              onClick={() => router.push(`/account/${account.id}`)}
+                              className="text-zinc-600 hover:text-zinc-900 hover:underline dark:text-zinc-400 dark:hover:text-zinc-100"
+                            >
+                              {account.account_name}
+                            </button>
+                          </td>
+                          <td className="px-6 py-4 text-right font-medium text-zinc-900 dark:text-zinc-50">
+                            {formatCurrency(-(account.solde?.balance))}
+                          </td>
+                        </tr>
+                      ))}
+                      <tr className="border-t-2 border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900/50">
+                        <td className="px-6 py-3 font-semibold text-zinc-900 dark:text-zinc-50">
+                          Total
+                        </td>
+                        <td className="px-6 py-3 text-right font-semibold text-zinc-900 dark:text-zinc-50">
+                          {formatCurrency(
+                            -evolution.income.reduce((sum, acc) => sum + (acc.solde?.balance ?? 0), 0)
+                          )}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {/* Expense Accounts */}
+            {evolution && evolution.expense.length > 0 && (
+              <div>
+                <h3 className="mb-3 text-lg font-semibold text-zinc-900 dark:text-zinc-50">Expense</h3>
+                <div className="overflow-x-auto rounded-lg border border-zinc-200 dark:border-zinc-800">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-zinc-200 bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-900">
+                        <th className="px-6 py-3 text-left font-semibold text-zinc-900 dark:text-zinc-50">
+                          Account Name
+                        </th>
+                        <th className="px-6 py-3 text-right font-semibold text-zinc-900 dark:text-zinc-50">
+                          Balance
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {evolution.expense.map((account) => (
+                        <tr
+                          key={account.id}
+                          className="border-b border-zinc-200 hover:bg-zinc-50 dark:border-zinc-800 dark:hover:bg-zinc-900/50"
+                        >
+                          <td className="px-6 py-4 text-zinc-900 dark:text-zinc-50">
+                            <button
+                              type="button"
+                              onClick={() => router.push(`/account/${account.id}`)}
+                              className="text-zinc-600 hover:text-zinc-900 hover:underline dark:text-zinc-400 dark:hover:text-zinc-100"
+                            >
+                              {account.account_name}
+                            </button>
+                          </td>
+                          <td className="px-6 py-4 text-right font-medium text-zinc-900 dark:text-zinc-50">
+                            {formatCurrency(account.solde?.balance)}
+                          </td>
+                        </tr>
+                      ))}
+                      <tr className="border-t-2 border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900/50">
+                        <td className="px-6 py-3 font-semibold text-zinc-900 dark:text-zinc-50">
+                          Total
+                        </td>
+                        <td className="px-6 py-3 text-right font-semibold text-zinc-900 dark:text-zinc-50">
+                          {formatCurrency(
+                            evolution.expense.reduce((sum, acc) => sum + (acc.solde?.balance ?? 0), 0)
+                          )}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      ) : loading && accounts === null ? (
+        <p className="text-sm text-zinc-500 dark:text-zinc-400">Loading account balances…</p>
+      ) : !loading && accounts && accounts.length === 0 ? (
+        <p className="text-sm text-zinc-600 dark:text-zinc-400">No accounts found.</p>
       ) : null}
 
       <Link

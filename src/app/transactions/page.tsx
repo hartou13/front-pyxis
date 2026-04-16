@@ -40,20 +40,38 @@ export default function TransactionsPage() {
     setError(null);
     try {
       const raw = await fetchTransactions(page, limit);
-      setTransactions(transactionsResponseToList(raw));
-      setCurrentPage(page);
-      setPageSize(limit);
 
-      // Extract pagination metadata if available
+      // Extract pagination metadata from pagination object
+      let transactions = transactionsResponseToList(raw);
+      let newTotal = 0;
+      let newPageSize = limit;
+
       if (raw && typeof raw === "object") {
         const o = raw as Record<string, unknown>;
-        if (typeof o.total === "number") {
-          setTotal(o.total);
-        }
-        if (typeof o.pageSize === "number") {
-          setPageSize(o.pageSize);
+        // Check for pagination object first
+        if (o.pagination && typeof o.pagination === "object") {
+          const p = o.pagination as Record<string, unknown>;
+          if (typeof p.total === "number") {
+            newTotal = p.total;
+          }
+          if (typeof p.pageSize === "number") {
+            newPageSize = p.pageSize;
+          }
+        } else {
+          // Fallback to top-level properties
+          if (typeof o.total === "number") {
+            newTotal = o.total;
+          }
+          if (typeof o.pageSize === "number") {
+            newPageSize = o.pageSize;
+          }
         }
       }
+
+      setTransactions(transactions);
+      setCurrentPage(page);
+      setPageSize(newPageSize);
+      setTotal(newTotal);
     } catch (err) {
       if (axios.isAxiosError(err)) {
         const msg =
@@ -117,14 +135,14 @@ export default function TransactionsPage() {
 
       <EditTransactionModal
         open={editTransaction !== null}
-        transaction={editTransaction}
+        transaction={editTransaction as Record<string, unknown> | undefined}
         onClose={() => setEditTransaction(null)}
         onUpdated={() => void load(currentPage, pageSize)}
       />
 
       <DeleteTransactionModal
         open={deleteTransaction !== null}
-        transaction={deleteTransaction}
+        transaction={deleteTransaction as Record<string, unknown> | undefined}
         onClose={() => setDeleteTransaction(null)}
         onDeleted={() => void load(currentPage, pageSize)}
       />

@@ -49,8 +49,7 @@ export function AddAccountModal({
     setAccountName("");
     setMoveType("movement");
     setAccountType("personal");
-    const firstId = accounts.map(accountId).find(Boolean);
-    setSuperAccountId(firstId ?? "");
+    setSuperAccountId("");
   }, [open, accounts]);
 
   useEffect(() => {

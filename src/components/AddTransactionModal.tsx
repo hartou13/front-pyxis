@@ -63,6 +63,20 @@ export function AddTransactionModal({
       try {
         const raw = await fetchAccounts();
         setAccounts(accountsResponseToList(raw));
+
+        // Set default date to current timestamp
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, "0");
+        const day = String(now.getDate()).padStart(2, "0");
+        const hours = String(now.getHours()).padStart(2, "0");
+        const minutes = String(now.getMinutes()).padStart(2, "0");
+        const defaultDate = `${year}-${month}-${day}T${hours}:${minutes}`;
+
+        setFormData((prev) => ({
+          ...prev,
+          date: defaultDate,
+        }));
       } catch (err) {
         let msg = "Failed to load accounts.";
         if (axios.isAxiosError(err)) {
@@ -227,9 +241,10 @@ export function AddTransactionModal({
                       getString(acc, "name") ||
                       id ||
                       "Unnamed";
+                    const moveType = getAccountMoveType(acc);
                     return (
                       <option key={id} value={id}>
-                        {name}
+                        {name} ({moveType})
                       </option>
                     );
                   })}
@@ -256,9 +271,10 @@ export function AddTransactionModal({
                       getString(acc, "name") ||
                       id ||
                       "Unnamed";
+                    const moveType = getAccountMoveType(acc);
                     return (
                       <option key={id} value={id}>
-                        {name}
+                        {name} ({moveType})
                       </option>
                     );
                   })}

@@ -3,6 +3,7 @@
 import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { EditAccountModal } from "@/components/EditAccountModal";
 import { DeleteAccountModal } from "@/components/DeleteAccountModal";
 import { AddTransactionModal } from "@/components/AddTransactionModal";
@@ -10,7 +11,7 @@ import { EditTransactionModal } from "@/components/EditTransactionModal";
 import { DeleteMoveModal } from "@/components/DeleteMoveModal";
 import { ViewMoveModal } from "@/components/ViewMoveModal";
 import { AccountMoveHistoryTable } from "@/components/AccountMoveHistoryTable";
-import { fetchAccount, fetchAccountMoveHistory, fetchAccountSolde, deleteAccount } from "@/lib/accounts-api";
+import { fetchAccount, fetchAccountMoveHistory, fetchAccountSolde, fetchAccountTendency, fetchAccountWeekTendency, fetchAccountDayTendency, deleteAccount } from "@/lib/accounts-api";
 import { transactionsResponseToList } from "@/lib/transactions-api";
 
 function getString(obj: Record<string, unknown>, key: string): string | undefined {
@@ -154,7 +155,7 @@ function formatCurrency(amount: number | undefined | null): string {
   return "—";
 }
 
-interface Account {
+interface Account extends Record<string, unknown> {
   id: string;
   user_id: string;
   super_account_id: string | null;
@@ -166,6 +167,24 @@ interface Account {
   super_account: unknown;
   sub_accounts: Account[];
 }
+
+interface MonthlyTendency {
+  year: number;
+  month: number;
+  balance: number;
+}
+
+interface WeeklyTendency {
+  monday: string;
+  balance: number;
+}
+
+interface DailyTendency {
+  date: string;
+  balance: number;
+}
+
+type TendencyView = "monthly" | "weekly" | "daily";
 
 export default function AccountDetailPage() {
   const router = useRouter();
@@ -191,6 +210,14 @@ export default function AccountDetailPage() {
   const [solde, setSolde] = useState<number | null>(null);
   const [soldeError, setSoldeError] = useState<string | null>(null);
   const [soldeLoading, setSoldeLoading] = useState(false);
+
+  // Tendency state
+  const [tendencyView, setTendencyView] = useState<TendencyView>("monthly");
+  const [monthlyData, setMonthlyData] = useState<MonthlyTendency[] | null>(null);
+  const [weeklyData, setWeeklyData] = useState<WeeklyTendency[] | null>(null);
+  const [dailyData, setDailyData] = useState<DailyTendency[] | null>(null);
+  const [tendencyLoading, setTendencyLoading] = useState(false);
+  const [tendencyError, setTendencyError] = useState<string | null>(null);
 
   // Move action states
   const [viewMoveId, setViewMoveId] = useState<string | undefined>(undefined);
@@ -243,11 +270,23 @@ export default function AccountDetailPage() {
         // Extract pagination metadata if available
         if (raw && typeof raw === "object") {
           const o = raw as Record<string, unknown>;
-          if (typeof o.total === "number") {
-            setMoveHistoryTotal(o.total);
-          }
-          if (typeof o.pageSize === "number") {
-            setMoveHistoryPageSize(o.pageSize);
+          // Check for pagination object first
+          if (o.pagination && typeof o.pagination === "object") {
+            const p = o.pagination as Record<string, unknown>;
+            if (typeof p.total === "number") {
+              setMoveHistoryTotal(p.total);
+            }
+            if (typeof p.pageSize === "number") {
+              setMoveHistoryPageSize(p.pageSize);
+            }
+          } else {
+            // Fallback to top-level properties
+            if (typeof o.total === "number") {
+              setMoveHistoryTotal(o.total);
+            }
+            if (typeof o.pageSize === "number") {
+              setMoveHistoryPageSize(o.pageSize);
+            }
           }
         }
       } catch (err) {
@@ -310,6 +349,75 @@ export default function AccountDetailPage() {
     }
   }, [accountId]);
 
+  const loadTendencies = useCallback(async () => {
+    if (!accountId || !account) return;
+    setTendencyLoading(true);
+    setTendencyError(null);
+    try {
+      const [monthlyRaw, weeklyRaw, dailyRaw] = await Promise.all([
+        fetchAccountTendency(accountId),
+        fetchAccountWeekTendency(accountId),
+        fetchAccountDayTendency(accountId),
+      ]);
+
+      const isIncome = account.account_move_type?.toLowerCase() === "income";
+      const multiplier = isIncome ? -1 : 1;
+
+      // Process monthly data
+      if (Array.isArray(monthlyRaw)) {
+        setMonthlyData(
+          monthlyRaw
+            .filter((x): x is MonthlyTendency =>
+              !!x && typeof x === "object" && "year" in x && "month" in x && "balance" in x
+            )
+            .map((item) => ({ ...item, balance: item.balance * multiplier }))
+        );
+      }
+
+      // Process weekly data
+      if (Array.isArray(weeklyRaw)) {
+        setWeeklyData(
+          weeklyRaw
+            .filter((x): x is WeeklyTendency =>
+              !!x && typeof x === "object" && "monday" in x && "balance" in x
+            )
+            .map((item) => ({ ...item, balance: item.balance * multiplier }))
+        );
+      }
+
+      // Process daily data
+      if (Array.isArray(dailyRaw)) {
+        setDailyData(
+          dailyRaw
+            .filter((x): x is DailyTendency =>
+              !!x && typeof x === "object" && "date" in x && "balance" in x
+            )
+            .map((item) => ({ ...item, balance: item.balance * multiplier }))
+        );
+      }
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        const msg =
+          err.response?.data &&
+          typeof err.response.data === "object" &&
+          "message" in err.response.data &&
+          typeof (err.response.data as { message: unknown }).message === "string"
+            ? (err.response.data as { message: string }).message
+            : err.response?.statusText || err.message;
+        setTendencyError(typeof msg === "string" ? msg : "Failed to load balance tendency.");
+      } else if (err instanceof Error) {
+        setTendencyError(err.message);
+      } else {
+        setTendencyError("Failed to load balance tendency.");
+      }
+      setMonthlyData(null);
+      setWeeklyData(null);
+      setDailyData(null);
+    } finally {
+      setTendencyLoading(false);
+    }
+  }, [accountId, account]);
+
   const handleDeleteAccount = useCallback(async () => {
     if (!accountId) return;
     const accountName = account?.account_name || accountId;
@@ -339,11 +447,21 @@ export default function AccountDetailPage() {
     }
   }, [accountId, account?.account_name, router]);
 
+  // Load account and move history on mount
   useEffect(() => {
     void load();
     void loadMoveHistory(1, 10);
-    void loadSolde();
-  }, [load, loadMoveHistory, loadSolde]);
+  }, [load, loadMoveHistory]);
+
+  // Load solde or tendencies when account loads
+  useEffect(() => {
+    if (!account) return;
+    if (account.account_move_type?.toLowerCase() === "movement") {
+      void loadSolde();
+    } else {
+      void loadTendencies();
+    }
+  }, [account?.id, account?.account_move_type, loadSolde, loadTendencies]);
 
   if (loading && !account) {
     return (
@@ -450,7 +568,11 @@ export default function AccountDetailPage() {
         onClose={() => setDeleteMove(null)}
         onDeleted={() => {
           void loadMoveHistory(moveHistoryPage, moveHistoryPageSize);
-          void loadSolde();
+          if (account?.account_move_type?.toLowerCase() === "movement") {
+            void loadSolde();
+          } else {
+            void loadTendencies();
+          }
         }}
       />
 
@@ -465,11 +587,15 @@ export default function AccountDetailPage() {
 
       <EditTransactionModal
         open={editMove !== null}
-        transaction={editMove}
+        transaction={editMove as Record<string, unknown> | undefined}
         onClose={() => setEditMove(null)}
         onUpdated={() => {
           void loadMoveHistory(moveHistoryPage, moveHistoryPageSize);
-          void loadSolde();
+          if (account?.account_move_type?.toLowerCase() === "movement") {
+            void loadSolde();
+          } else {
+            void loadTendencies();
+          }
         }}
       />
 
@@ -565,24 +691,180 @@ export default function AccountDetailPage() {
         <p className="text-sm text-zinc-600 dark:text-zinc-400">No sub-accounts.</p>
       )}
 
-      <div className="rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
-        <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400">Current Balance</p>
-        {soldeError ? (
-          <p className="mt-2 text-sm text-red-600 dark:text-red-400">{soldeError}</p>
-        ) : soldeLoading ? (
-          <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">Loading balance…</p>
-        ) : solde !== null ? (
-          <p
-            className={`mt-2 text-3xl font-semibold ${
-              solde >= 0
-                ? "text-emerald-600 dark:text-emerald-400"
-                : "text-red-600 dark:text-red-400"
-            }`}
-          >
-            {formatCurrency(solde)}
-          </p>
-        ) : null}
-      </div>
+      {moveType?.toLowerCase() === "movement" ? (
+        <div className="rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
+          <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400">Current Balance</p>
+          {soldeError ? (
+            <p className="mt-2 text-sm text-red-600 dark:text-red-400">{soldeError}</p>
+          ) : soldeLoading ? (
+            <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">Loading balance…</p>
+          ) : solde !== null ? (
+            <p
+              className={`mt-2 text-3xl font-semibold ${
+                solde >= 0
+                  ? "text-emerald-600 dark:text-emerald-400"
+                  : "text-red-600 dark:text-red-400"
+              }`}
+            >
+              {formatCurrency(solde)}
+            </p>
+          ) : null}
+        </div>
+      ) : (
+        <div className="rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
+          <div className="mb-6">
+            <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-4">Balance Tendency</p>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => setTendencyView("monthly")}
+                className={`px-3 py-2 text-sm font-medium rounded-lg transition ${
+                  tendencyView === "monthly"
+                    ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900"
+                    : "bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700"
+                }`}
+              >
+                Monthly
+              </button>
+              <button
+                type="button"
+                onClick={() => setTendencyView("weekly")}
+                className={`px-3 py-2 text-sm font-medium rounded-lg transition ${
+                  tendencyView === "weekly"
+                    ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900"
+                    : "bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700"
+                }`}
+              >
+                Weekly
+              </button>
+              <button
+                type="button"
+                onClick={() => setTendencyView("daily")}
+                className={`px-3 py-2 text-sm font-medium rounded-lg transition ${
+                  tendencyView === "daily"
+                    ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900"
+                    : "bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700"
+                }`}
+              >
+                Daily
+              </button>
+            </div>
+          </div>
+
+          {tendencyError ? (
+            <p className="text-sm text-red-600 dark:text-red-400">{tendencyError}</p>
+          ) : tendencyLoading ? (
+            <p className="text-sm text-zinc-500 dark:text-zinc-400">Loading balance tendency…</p>
+          ) : tendencyView === "monthly" && monthlyData && monthlyData.length > 0 ? (
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={monthlyData} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e4e4e7" />
+                <XAxis
+                  dataKey="month"
+                  tickFormatter={(month) => {
+                    const d = new Date(monthlyData[0].year, month - 1);
+                    return d.toLocaleDateString("en-US", { month: "short" });
+                  }}
+                  stroke="#71717a"
+                  style={{ fontSize: "12px" }}
+                />
+                <YAxis
+                  stroke="#71717a"
+                  style={{ fontSize: "12px" }}
+                  tickFormatter={(value) => {
+                    if (value === 0) return "0";
+                    if (Math.abs(value) >= 1000000) return `${(value / 1000000).toFixed(0)}M`;
+                    if (Math.abs(value) >= 1000) return `${(value / 1000).toFixed(0)}K`;
+                    return value.toFixed(0);
+                  }}
+                />
+                <Tooltip
+                  formatter={(value) => formatCurrency(value as number)}
+                  contentStyle={{
+                    backgroundColor: "rgba(24, 24, 27, 0.95)",
+                    border: "1px solid rgba(113, 113, 122, 0.5)",
+                    borderRadius: "8px",
+                    color: "#fafafa",
+                  }}
+                />
+                <Line type="monotone" dataKey="balance" stroke="#6366f1" dot={{ fill: "#6366f1", r: 4 }} strokeWidth={2} />
+              </LineChart>
+            </ResponsiveContainer>
+          ) : tendencyView === "weekly" && weeklyData && weeklyData.length > 0 ? (
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={weeklyData} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e4e4e7" />
+                <XAxis
+                  dataKey="monday"
+                  tickFormatter={(date) => {
+                    const d = new Date(date);
+                    return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+                  }}
+                  stroke="#71717a"
+                  style={{ fontSize: "12px" }}
+                />
+                <YAxis
+                  stroke="#71717a"
+                  style={{ fontSize: "12px" }}
+                  tickFormatter={(value) => {
+                    if (value === 0) return "0";
+                    if (Math.abs(value) >= 1000000) return `${(value / 1000000).toFixed(0)}M`;
+                    if (Math.abs(value) >= 1000) return `${(value / 1000).toFixed(0)}K`;
+                    return value.toFixed(0);
+                  }}
+                />
+                <Tooltip
+                  formatter={(value) => formatCurrency(value as number)}
+                  contentStyle={{
+                    backgroundColor: "rgba(24, 24, 27, 0.95)",
+                    border: "1px solid rgba(113, 113, 122, 0.5)",
+                    borderRadius: "8px",
+                    color: "#fafafa",
+                  }}
+                />
+                <Line type="monotone" dataKey="balance" stroke="#6366f1" dot={{ fill: "#6366f1", r: 4 }} strokeWidth={2} />
+              </LineChart>
+            </ResponsiveContainer>
+          ) : tendencyView === "daily" && dailyData && dailyData.length > 0 ? (
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={dailyData} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e4e4e7" />
+                <XAxis
+                  dataKey="date"
+                  tickFormatter={(date) => {
+                    const d = new Date(date);
+                    return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+                  }}
+                  stroke="#71717a"
+                  style={{ fontSize: "12px" }}
+                />
+                <YAxis
+                  stroke="#71717a"
+                  style={{ fontSize: "12px" }}
+                  tickFormatter={(value) => {
+                    if (value === 0) return "0";
+                    if (Math.abs(value) >= 1000000) return `${(value / 1000000).toFixed(0)}M`;
+                    if (Math.abs(value) >= 1000) return `${(value / 1000).toFixed(0)}K`;
+                    return value.toFixed(0);
+                  }}
+                />
+                <Tooltip
+                  formatter={(value) => formatCurrency(value as number)}
+                  contentStyle={{
+                    backgroundColor: "rgba(24, 24, 27, 0.95)",
+                    border: "1px solid rgba(113, 113, 122, 0.5)",
+                    borderRadius: "8px",
+                    color: "#fafafa",
+                  }}
+                />
+                <Line type="monotone" dataKey="balance" stroke="#6366f1" dot={{ fill: "#6366f1", r: 4 }} strokeWidth={2} />
+              </LineChart>
+            </ResponsiveContainer>
+          ) : (
+            <p className="text-sm text-zinc-600 dark:text-zinc-400">No balance data available.</p>
+          )}
+        </div>
+      )}
 
       <div>
         <div className="mb-4 flex items-center justify-between">
