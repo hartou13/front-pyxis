@@ -120,7 +120,7 @@ export function EditAccountModal({
   }
 
   const selectClass =
-    "w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none focus:border-zinc-400 focus:ring-2 focus:ring-zinc-400/30 dark:border-zinc-600 dark:bg-zinc-950 dark:text-zinc-50 dark:focus:border-zinc-500";
+    "w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-400 focus:ring-2 focus:ring-slate-400/30 dark:border-slate-600 dark:bg-slate-950 dark:text-slate-50 dark:focus:border-slate-500";
 
   const superOptions = accounts.filter((acc) => accountId(acc) !== idForPut);
   const superOptionIds = new Set(
@@ -142,11 +142,11 @@ export function EditAccountModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="edit-account-title"
-        className="relative z-10 w-full max-w-md rounded-2xl border border-zinc-200 bg-white p-6 shadow-xl dark:border-zinc-800 dark:bg-zinc-900"
+        className="relative z-10 w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-xl dark:border-slate-800 dark:bg-slate-900"
       >
         <h2
           id="edit-account-title"
-          className="text-lg font-semibold text-zinc-900 dark:text-zinc-50"
+          className="text-lg font-semibold text-slate-900 dark:text-slate-50"
         >
           Edit account
         </h2>
@@ -155,7 +155,7 @@ export function EditAccountModal({
           <div className="flex flex-col gap-1.5">
             <label
               htmlFor="edit-account-name"
-              className="text-sm font-medium text-zinc-700 dark:text-zinc-300"
+              className="text-sm font-medium text-slate-700 dark:text-slate-300"
             >
               Account name
             </label>
@@ -165,14 +165,14 @@ export function EditAccountModal({
               onChange={(e) => setAccountName(e.target.value)}
               required
               autoComplete="off"
-              className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none focus:border-zinc-400 focus:ring-2 focus:ring-zinc-400/30 dark:border-zinc-600 dark:bg-zinc-950 dark:text-zinc-50 dark:focus:border-zinc-500"
+              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-400 focus:ring-2 focus:ring-slate-400/30 dark:border-slate-600 dark:bg-slate-950 dark:text-slate-50 dark:focus:border-slate-500"
             />
           </div>
 
           <div className="flex flex-col gap-1.5">
             <label
               htmlFor="edit-move-type"
-              className="text-sm font-medium text-zinc-700 dark:text-zinc-300"
+              className="text-sm font-medium text-slate-700 dark:text-slate-300"
             >
               Move type
             </label>
@@ -193,7 +193,7 @@ export function EditAccountModal({
           <div className="flex flex-col gap-1.5">
             <label
               htmlFor="edit-account-type"
-              className="text-sm font-medium text-zinc-700 dark:text-zinc-300"
+              className="text-sm font-medium text-slate-700 dark:text-slate-300"
             >
               Account type
             </label>
@@ -213,7 +213,7 @@ export function EditAccountModal({
           <div className="flex flex-col gap-1.5">
             <label
               htmlFor="edit-super-account"
-              className="text-sm font-medium text-zinc-700 dark:text-zinc-300"
+              className="text-sm font-medium text-slate-700 dark:text-slate-300"
             >
               Super account
             </label>
@@ -256,14 +256,14 @@ export function EditAccountModal({
               type="button"
               onClick={onClose}
               disabled={pending}
-              className="rounded-lg border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-900 hover:bg-zinc-50 disabled:opacity-50 dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800"
+              className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-900 hover:bg-slate-50 disabled:opacity-50 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={pending || !accountName.trim()}
-              className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
+              className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200"
             >
               {pending ? "Saving…" : "Save"}
             </button>

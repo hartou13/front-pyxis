@@ -97,7 +97,7 @@ function MoveTypeBadge({ value }: { value: string | undefined }) {
   let Icon = IconUnknown;
   let label = value ?? "Unknown";
   let palette =
-    "bg-zinc-100 text-zinc-700 ring-zinc-200/80 dark:bg-zinc-800 dark:text-zinc-200 dark:ring-zinc-600/50";
+    "bg-slate-100 text-slate-700 ring-slate-200/80 dark:bg-slate-800 dark:text-slate-200 dark:ring-slate-600/50";
   if (v === "income") {
     Icon = IconIncome;
     label = "Income";
@@ -130,7 +130,7 @@ function AccountTypeBadge({ value }: { value: string | undefined }) {
   let Icon = IconUnknown;
   let label = value ?? "Unknown";
   let palette =
-    "bg-zinc-100 text-zinc-700 ring-zinc-200/80 dark:bg-zinc-800 dark:text-zinc-200 dark:ring-zinc-600/50";
+    "bg-slate-100 text-slate-700 ring-slate-200/80 dark:bg-slate-800 dark:text-slate-200 dark:ring-slate-600/50";
   if (v === "external") {
     Icon = IconExternal;
     label = "External";
@@ -180,9 +180,9 @@ function AccountCard({
   const rowId = accountRowId(account);
 
   return (
-    <article className="flex flex-col rounded-xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+    <article className="flex flex-col rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
       <div className="flex items-start justify-between gap-3">
-        <h2 className="min-w-0 flex-1 text-lg font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
+        <h2 className="min-w-0 flex-1 text-lg font-semibold tracking-tight text-slate-900 dark:text-slate-50">
           {name}
         </h2>
         <div className="flex shrink-0 gap-1">
@@ -190,7 +190,7 @@ function AccountCard({
             type="button"
             onClick={() => rowId && onView(rowId)}
             disabled={!rowId}
-            className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-zinc-600 transition hover:bg-zinc-100 hover:text-zinc-900 disabled:cursor-not-allowed disabled:opacity-40 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-40 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"
             aria-label="View details"
             title={rowId ? "View details" : "Missing account id"}
           >
@@ -200,7 +200,7 @@ function AccountCard({
             type="button"
             onClick={() => onEdit(account)}
             disabled={!rowId}
-            className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-zinc-600 transition hover:bg-zinc-100 hover:text-zinc-900 disabled:cursor-not-allowed disabled:opacity-40 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-40 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"
             aria-label="Edit account"
             title={rowId ? "Edit account" : "Missing account id"}
           >
@@ -210,7 +210,7 @@ function AccountCard({
             type="button"
             onClick={() => onDelete(account)}
             disabled={!rowId}
-            className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-zinc-600 transition hover:bg-rose-50 hover:text-rose-700 disabled:cursor-not-allowed disabled:opacity-40 dark:text-zinc-400 dark:hover:bg-rose-950/40 dark:hover:text-rose-400"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-slate-600 transition hover:bg-rose-50 hover:text-rose-700 disabled:cursor-not-allowed disabled:opacity-40 dark:text-slate-400 dark:hover:bg-rose-950/40 dark:hover:text-rose-400"
             aria-label="Delete account"
             title={rowId ? "Delete account" : "Missing account id"}
           >
@@ -312,13 +312,13 @@ export default function AccountsPage() {
   );
 
   return (
-    <div className="flex min-h-full flex-1 flex-col gap-6 bg-zinc-50 px-6 py-8 dark:bg-zinc-950">
+    <div className="flex min-h-full flex-1 flex-col gap-6 bg-slate-50 px-6 py-8 dark:bg-slate-950">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
+          <h1 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-50">
             Accounts
           </h1>
-          <p className="mt-1 text-zinc-600 dark:text-zinc-400">
+          <p className="mt-1 text-slate-600 dark:text-slate-400">
             Accounts from your Pyxis workspace.
           </p>
         </div>
@@ -326,7 +326,7 @@ export default function AccountsPage() {
           <button
             type="button"
             onClick={() => setAddOpen(true)}
-            className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
+            className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200"
           >
             Add
           </button>
@@ -334,7 +334,7 @@ export default function AccountsPage() {
             type="button"
             onClick={() => void load()}
             disabled={loading}
-            className="rounded-lg border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-900 transition hover:bg-zinc-50 disabled:opacity-50 dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800"
+            className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-900 transition hover:bg-slate-50 disabled:opacity-50 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800"
           >
             {loading ? "Refreshing…" : "Refresh"}
           </button>
@@ -363,11 +363,11 @@ export default function AccountsPage() {
       ) : null}
 
       {loading && accounts === null ? (
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">Loading accounts…</p>
+        <p className="text-sm text-slate-500 dark:text-slate-400">Loading accounts…</p>
       ) : null}
 
       {!loading && accounts && accounts.length === 0 ? (
-        <p className="text-sm text-zinc-600 dark:text-zinc-400">
+        <p className="text-sm text-slate-600 dark:text-slate-400">
           No accounts returned.
         </p>
       ) : null}

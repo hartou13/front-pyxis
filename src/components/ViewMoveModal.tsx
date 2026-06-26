@@ -49,10 +49,10 @@ function DetailRow({
 }) {
   return (
     <div className="flex flex-col gap-1">
-      <dt className="text-xs font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+      <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
         {label}
       </dt>
-      <dd className="text-sm text-zinc-900 dark:text-zinc-100">{value}</dd>
+      <dd className="text-sm text-slate-900 dark:text-slate-100">{value}</dd>
     </div>
   );
 }
@@ -72,10 +72,10 @@ function AccountInfo({
 
   return (
     <div className="flex flex-col gap-1">
-      <dt className="text-xs font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+      <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
         {label}
       </dt>
-      <dd className="flex flex-col gap-1 text-sm text-zinc-900 dark:text-zinc-100">
+      <dd className="flex flex-col gap-1 text-sm text-slate-900 dark:text-slate-100">
         <span>{name}</span>
       </dd>
     </div>
@@ -139,15 +139,15 @@ export function ViewMoveModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="w-full max-w-2xl rounded-xl border border-zinc-200 bg-white shadow-lg dark:border-zinc-800 dark:bg-zinc-900">
-        <div className="flex items-center justify-between border-b border-zinc-200 px-6 py-4 dark:border-zinc-800">
-          <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
+      <div className="w-full max-w-2xl rounded-xl border border-slate-200 bg-white shadow-lg dark:border-slate-800 dark:bg-slate-900">
+        <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4 dark:border-slate-800">
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-50">
             Move Details
           </h2>
           <button
             type="button"
             onClick={onClose}
-            className="text-zinc-400 transition hover:text-zinc-600 dark:hover:text-zinc-300"
+            className="text-slate-400 transition hover:text-slate-600 dark:hover:text-slate-300"
             aria-label="Close modal"
           >
             <svg
@@ -168,7 +168,7 @@ export function ViewMoveModal({
 
         <div className="px-6 py-4">
           {loading ? (
-            <p className="text-sm text-zinc-500 dark:text-zinc-400">
+            <p className="text-sm text-slate-500 dark:text-slate-400">
               Loading move details…
             </p>
           ) : error ? (
@@ -214,11 +214,11 @@ export function ViewMoveModal({
           ) : null}
         </div>
 
-        <div className="border-t border-zinc-200 bg-zinc-50 px-6 py-3 dark:border-zinc-800 dark:bg-zinc-800/50">
+        <div className="border-t border-slate-200 bg-slate-50 px-6 py-3 dark:border-slate-800 dark:bg-slate-800/50">
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-900 transition hover:bg-zinc-50 dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800"
+            className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-900 transition hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800"
           >
             Close
           </button>

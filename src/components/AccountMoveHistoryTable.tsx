@@ -68,7 +68,7 @@ function MoveTypeIcon({ value }: { value: string | undefined }) {
   const v = value?.toLowerCase().trim();
   let Icon = IconUnknown;
   let palette =
-    "bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-200";
+    "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200";
   if (v === "income") {
     Icon = IconIncome;
     palette =
@@ -197,21 +197,21 @@ function MoveRow({
 
 
   return (
-    <tr className="border-b border-zinc-200 hover:bg-zinc-50 dark:border-zinc-800 dark:hover:bg-zinc-800/50">
-      <td className="px-4 py-3 text-sm text-zinc-900 dark:text-zinc-100">
+    <tr className="border-b border-slate-200 hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-800/50">
+      <td className="px-4 py-3 text-sm text-slate-900 dark:text-slate-100">
         {description}
       </td>
-      <td className="px-4 py-3 text-sm text-zinc-600 dark:text-zinc-400">
+      <td className="px-4 py-3 text-sm text-slate-600 dark:text-slate-400">
         {formatDate(date)}
       </td>
-      <td className="px-4 py-3 text-sm text-zinc-600 dark:text-zinc-400">
+      <td className="px-4 py-3 text-sm text-slate-600 dark:text-slate-400">
         <div className="flex items-center gap-2">
           <MoveTypeIcon value={moveType} />
           <div className="flex flex-col">
-            <span className="text-xs font-medium text-zinc-500 dark:text-zinc-500">
+            <span className="text-xs font-medium text-slate-500 dark:text-slate-500">
               {counterpartyLabel}
             </span>
-            <span className="text-zinc-900 dark:text-zinc-100">
+            <span className="text-slate-900 dark:text-slate-100">
               {counterpartyName || "—"}
             </span>
           </div>
@@ -231,7 +231,7 @@ function MoveRow({
           type="button"
           onClick={() => id && onView(id)}
           disabled={!id}
-          className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-zinc-600 transition hover:bg-zinc-100 hover:text-zinc-900 disabled:cursor-not-allowed disabled:opacity-40 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
+          className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-40 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"
           aria-label="View details"
           title={id ? "View details" : "Missing move id"}
         >
@@ -241,7 +241,7 @@ function MoveRow({
           type="button"
           onClick={() => onEdit(move)}
           disabled={!id}
-          className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-zinc-600 transition hover:bg-zinc-100 hover:text-zinc-900 disabled:cursor-not-allowed disabled:opacity-40 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
+          className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-40 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"
           aria-label="Edit move"
           title={id ? "Edit move" : "Missing move id"}
         >
@@ -251,7 +251,7 @@ function MoveRow({
           type="button"
           onClick={() => onDelete(move)}
           disabled={!id}
-          className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-zinc-600 transition hover:bg-red-50 hover:text-red-700 disabled:cursor-not-allowed disabled:opacity-40 dark:text-zinc-400 dark:hover:bg-red-950/40 dark:hover:text-red-400"
+          className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-slate-600 transition hover:bg-red-50 hover:text-red-700 disabled:cursor-not-allowed disabled:opacity-40 dark:text-slate-400 dark:hover:bg-red-950/40 dark:hover:text-red-400"
           aria-label="Delete move"
           title={id ? "Delete move" : "Missing move id"}
         >
@@ -295,28 +295,28 @@ export function AccountMoveHistoryTable({
 
   return (
     <>
-      <div className="overflow-x-auto rounded-lg border border-zinc-200 dark:border-zinc-800">
+      <div className="overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-800">
         <table className="w-full text-sm">
-          <thead className="border-b border-zinc-200 bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-800">
+          <thead className="border-b border-slate-200 bg-slate-100 dark:border-slate-800 dark:bg-slate-800">
             <tr>
-              <th className="px-4 py-3 text-left font-semibold text-zinc-900 dark:text-zinc-50">
+              <th className="px-4 py-3 text-left font-semibold text-slate-900 dark:text-slate-50">
                 Description
               </th>
-              <th className="px-4 py-3 text-left font-semibold text-zinc-900 dark:text-zinc-50">
+              <th className="px-4 py-3 text-left font-semibold text-slate-900 dark:text-slate-50">
                 Date
               </th>
-              <th className="px-4 py-3 text-left font-semibold text-zinc-900 dark:text-zinc-50">
+              <th className="px-4 py-3 text-left font-semibold text-slate-900 dark:text-slate-50">
                 Account
               </th>
-              <th className="px-4 py-3 text-right font-semibold text-zinc-900 dark:text-zinc-50">
+              <th className="px-4 py-3 text-right font-semibold text-slate-900 dark:text-slate-50">
                 Amount
               </th>
-              <th className="px-4 py-3 text-right font-semibold text-zinc-900 dark:text-zinc-50">
+              <th className="px-4 py-3 text-right font-semibold text-slate-900 dark:text-slate-50">
                 Actions
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-zinc-200 bg-white dark:divide-zinc-800 dark:bg-zinc-900">
+          <tbody className="divide-y divide-zinc-200 bg-white dark:divide-zinc-800 dark:bg-slate-900">
             {moves.map((move, index) => (
               <MoveRow
                 key={
@@ -333,10 +333,10 @@ export function AccountMoveHistoryTable({
         </table>
       </div>
 
-      <div className="flex items-center justify-between rounded-lg border border-zinc-200 bg-white px-4 py-3 dark:border-zinc-800 dark:bg-zinc-900">
+      <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-3 dark:border-slate-800 dark:bg-slate-900">
         <div className="flex items-center gap-4">
           <div>
-            <label htmlFor="movePageSize" className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+            <label htmlFor="movePageSize" className="text-sm font-medium text-slate-700 dark:text-slate-300">
               Items per page:
             </label>
             <select
@@ -344,7 +344,7 @@ export function AccountMoveHistoryTable({
               value={pageSize}
               onChange={(e) => onPageSizeChange(Number(e.target.value))}
               disabled={loading}
-              className="ml-2 rounded border border-zinc-300 bg-white px-2 py-1 text-sm text-zinc-900 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100"
+              className="ml-2 rounded border border-slate-300 bg-white px-2 py-1 text-sm text-slate-900 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
             >
               <option value={5}>5</option>
               <option value={10}>10</option>
@@ -352,7 +352,7 @@ export function AccountMoveHistoryTable({
               <option value={50}>50</option>
             </select>
           </div>
-          <div className="text-sm text-zinc-600 dark:text-zinc-400">
+          <div className="text-sm text-slate-600 dark:text-slate-400">
             {total > 0
               ? `${(currentPage - 1) * pageSize + 1}–${Math.min(
                   currentPage * pageSize,
@@ -367,7 +367,7 @@ export function AccountMoveHistoryTable({
             type="button"
             onClick={() => onPageChange(currentPage - 1)}
             disabled={loading || currentPage <= 1}
-            className="rounded border border-zinc-300 bg-white px-3 py-1 text-sm font-medium text-zinc-900 transition hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800"
+            className="rounded border border-slate-300 bg-white px-3 py-1 text-sm font-medium text-slate-900 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800"
           >
             Previous
           </button>
@@ -383,8 +383,8 @@ export function AccountMoveHistoryTable({
                 disabled={loading}
                 className={`h-8 w-8 rounded text-sm font-medium transition ${
                   page === currentPage
-                    ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900"
-                    : "border border-zinc-300 bg-white text-zinc-900 hover:bg-zinc-50 dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800"
+                    ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
+                    : "border border-slate-300 bg-white text-slate-900 hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800"
                 } disabled:cursor-not-allowed disabled:opacity-50`}
               >
                 {page}
@@ -395,7 +395,7 @@ export function AccountMoveHistoryTable({
             type="button"
             onClick={() => onPageChange(currentPage + 1)}
             disabled={loading || currentPage >= Math.ceil(total / pageSize)}
-            className="rounded border border-zinc-300 bg-white px-3 py-1 text-sm font-medium text-zinc-900 transition hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800"
+            className="rounded border border-slate-300 bg-white px-3 py-1 text-sm font-medium text-slate-900 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800"
           >
             Next
           </button>

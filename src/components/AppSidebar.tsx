@@ -99,15 +99,15 @@ export function AppSidebar() {
 
   return (
     <aside
-      className={`flex shrink-0 flex-col border-r border-zinc-200 bg-white transition-[width] duration-200 ease-out dark:border-zinc-800 dark:bg-zinc-900 ${
+      className={`flex shrink-0 flex-col border-r border-slate-200 bg-white transition-[width] duration-200 ease-out dark:border-slate-800 dark:bg-slate-900 ${
         collapsed ? "w-[4.25rem]" : "w-56"
       }`}
     >
-      <div className="flex h-14 items-center justify-end border-b border-zinc-200 px-2 dark:border-zinc-800">
+      <div className="flex h-14 items-center justify-end border-b border-slate-200 px-2 dark:border-slate-800">
         <button
           type="button"
           onClick={toggle}
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-zinc-600 transition hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-50"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-50"
           aria-expanded={!collapsed}
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
@@ -130,7 +130,7 @@ export function AppSidebar() {
                 title={collapsed ? label : undefined}
                 className={`flex w-full items-center gap-3 rounded-lg py-2.5 text-sm font-medium transition ${
                   collapsed ? "justify-center px-0" : "px-3"
-                } text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800`}
+                } text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800`}
               >
                 <Icon className="h-5 w-5 shrink-0" />
                 <span
@@ -152,8 +152,8 @@ export function AppSidebar() {
                 collapsed ? "justify-center px-0" : "px-3"
               } ${
                 active
-                  ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900"
-                  : "text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
+                  ? "bg-teal-600 text-white dark:bg-teal-500 dark:text-slate-900"
+                  : "text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
               }`}
             >
               <Icon className="h-5 w-5 shrink-0" />

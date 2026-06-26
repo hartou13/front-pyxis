@@ -98,13 +98,13 @@ export default function TransactionsPage() {
   }, [load]);
 
   return (
-    <div className="flex min-h-full flex-1 flex-col gap-6 bg-zinc-50 px-6 py-8 dark:bg-zinc-950">
+    <div className="flex min-h-full flex-1 flex-col gap-6 bg-slate-50 px-6 py-8 dark:bg-slate-950">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
+          <h1 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-50">
             Transactions
           </h1>
-          <p className="mt-1 text-zinc-600 dark:text-zinc-400">
+          <p className="mt-1 text-slate-600 dark:text-slate-400">
             All transactions from your Pyxis workspace.
           </p>
         </div>
@@ -112,7 +112,7 @@ export default function TransactionsPage() {
           <button
             type="button"
             onClick={() => setAddOpen(true)}
-            className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
+            className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200"
           >
             Add
           </button>
@@ -120,7 +120,7 @@ export default function TransactionsPage() {
             type="button"
             onClick={() => void load(currentPage, pageSize)}
             disabled={loading}
-            className="rounded-lg border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-900 transition hover:bg-zinc-50 disabled:opacity-50 dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800"
+            className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-900 transition hover:bg-slate-50 disabled:opacity-50 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800"
           >
             {loading ? "Refreshing…" : "Refresh"}
           </button>
@@ -154,13 +154,13 @@ export default function TransactionsPage() {
       ) : null}
 
       {loading && transactions === null ? (
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">
+        <p className="text-sm text-slate-500 dark:text-slate-400">
           Loading transactions…
         </p>
       ) : null}
 
       {!loading && transactions && transactions.length === 0 ? (
-        <p className="text-sm text-zinc-600 dark:text-zinc-400">
+        <p className="text-sm text-slate-600 dark:text-slate-400">
           No transactions found.
         </p>
       ) : null}

@@ -63,20 +63,22 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-full flex-1 flex-col items-center justify-center bg-zinc-50 px-4 py-16 dark:bg-zinc-950">
-      <div className="w-full max-w-sm rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
-        <h1 className="text-center text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
-          Sign in to Pyxis
-        </h1>
-        <p className="mt-2 text-center text-sm text-zinc-500 dark:text-zinc-400">
-          Use your work email and password.
-        </p>
+    <div className="flex min-h-full flex-1 flex-col items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 px-4 py-16 dark:from-slate-950 dark:to-slate-900">
+      <div className="w-full max-w-sm rounded-2xl border border-slate-200 bg-white p-8 shadow-md dark:border-slate-800 dark:bg-slate-900">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
+            Pyxis
+          </h1>
+          <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
+            Sign in to your account
+          </p>
+        </div>
 
-        <form className="mt-8 flex flex-col gap-4" onSubmit={handleSubmit}>
-          <div className="flex flex-col gap-1.5">
+        <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+          <div className="flex flex-col gap-2">
             <label
               htmlFor="email"
-              className="text-sm font-medium text-zinc-700 dark:text-zinc-300"
+              className="text-sm font-medium text-slate-700 dark:text-slate-300"
             >
               Email
             </label>
@@ -87,14 +89,14 @@ export default function LoginPage() {
               autoComplete="email"
               required
               disabled={pending}
-              className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-zinc-900 outline-none ring-zinc-400 transition placeholder:text-zinc-400 focus:border-zinc-400 focus:ring-2 disabled:opacity-60 dark:border-zinc-600 dark:bg-zinc-950 dark:text-zinc-50 dark:focus:border-zinc-500"
-              placeholder="you@company.com"
+              className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 outline-none ring-teal-400/30 transition placeholder:text-slate-400 focus:border-teal-500 focus:ring-4 disabled:opacity-60 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-50 dark:focus:border-teal-500"
+              placeholder="you@example.com"
             />
           </div>
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-2">
             <label
               htmlFor="password"
-              className="text-sm font-medium text-zinc-700 dark:text-zinc-300"
+              className="text-sm font-medium text-slate-700 dark:text-slate-300"
             >
               Password
             </label>
@@ -105,30 +107,30 @@ export default function LoginPage() {
               autoComplete="current-password"
               required
               disabled={pending}
-              className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-zinc-900 outline-none ring-zinc-400 transition placeholder:text-zinc-400 focus:border-zinc-400 focus:ring-2 disabled:opacity-60 dark:border-zinc-600 dark:bg-zinc-950 dark:text-zinc-50 dark:focus:border-zinc-500"
+              className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 outline-none ring-teal-400/30 transition placeholder:text-slate-400 focus:border-teal-500 focus:ring-4 disabled:opacity-60 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-50 dark:focus:border-teal-500"
               placeholder="••••••••"
             />
           </div>
 
           {error ? (
-            <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-900 dark:bg-red-950/50 dark:text-red-200">
+            <div className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-900 dark:border-rose-900/50 dark:bg-rose-950/40 dark:text-rose-200">
               {error}
-            </p>
+            </div>
           ) : null}
 
           <button
             type="submit"
             disabled={pending}
-            className="mt-2 rounded-lg bg-zinc-900 py-2.5 text-sm font-medium text-white transition hover:bg-zinc-800 disabled:opacity-60 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
+            className="mt-2 rounded-lg bg-teal-600 py-2.5 text-sm font-medium text-white transition hover:bg-teal-700 disabled:opacity-60 dark:bg-teal-500 dark:hover:bg-teal-600"
           >
             {pending ? "Signing in…" : "Sign in"}
           </button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-zinc-500 dark:text-zinc-400">
+        <p className="mt-6 text-center text-sm text-slate-600 dark:text-slate-400">
           <Link
             href="/"
-            className="font-medium text-zinc-900 underline-offset-4 hover:underline dark:text-zinc-100"
+            className="font-medium text-teal-600 underline-offset-4 hover:underline dark:text-teal-400"
           >
             Back to home
           </Link>

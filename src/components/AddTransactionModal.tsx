@@ -165,15 +165,15 @@ export function AddTransactionModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-xl border border-zinc-200 bg-white shadow-lg dark:border-zinc-800 dark:bg-zinc-900">
-        <div className="sticky top-0 flex items-center justify-between border-b border-zinc-200 bg-white px-6 py-4 dark:border-zinc-800 dark:bg-zinc-900">
-          <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
+      <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-xl border border-slate-200 bg-white shadow-lg dark:border-slate-800 dark:bg-slate-900">
+        <div className="sticky top-0 flex items-center justify-between border-b border-slate-200 bg-white px-6 py-4 dark:border-slate-800 dark:bg-slate-900">
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-50">
             Add Transaction
           </h2>
           <button
             type="button"
             onClick={onClose}
-            className="text-zinc-400 transition hover:text-zinc-600 dark:hover:text-zinc-300"
+            className="text-slate-400 transition hover:text-slate-600 dark:hover:text-slate-300"
             aria-label="Close modal"
           >
             <svg
@@ -200,11 +200,11 @@ export function AddTransactionModal({
           ) : null}
 
           {loadingAccounts ? (
-            <p className="text-sm text-zinc-500 dark:text-zinc-400">Loading accounts…</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">Loading accounts…</p>
           ) : (
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                <label className="block text-sm font-medium text-slate-900 dark:text-slate-100">
                   Amount *
                 </label>
                 <NumericInput
@@ -216,13 +216,13 @@ export function AddTransactionModal({
                   allowDecimals
                   maxDecimals={2}
                   allowNegative={false}
-                  className="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 shadow-sm transition focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-zinc-400 dark:focus:ring-zinc-400"
+                  className="mt-1 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder-zinc-400 shadow-sm transition focus:border-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:placeholder-zinc-500 dark:focus:border-slate-400 dark:focus:ring-slate-400"
                   placeholder="0.00"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                <label className="block text-sm font-medium text-slate-900 dark:text-slate-100">
                   From Account *
                 </label>
                 <select
@@ -231,7 +231,7 @@ export function AddTransactionModal({
                   onChange={(e) =>
                     setFormData({ ...formData, from_account_id: e.target.value })
                   }
-                  className="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 shadow-sm transition focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100 dark:focus:border-zinc-400 dark:focus:ring-zinc-400"
+                  className="mt-1 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm transition focus:border-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:focus:border-slate-400 dark:focus:ring-slate-400"
                 >
                   <option value="">Select an account</option>
                   {fromAccountOptions.map((acc) => {
@@ -252,7 +252,7 @@ export function AddTransactionModal({
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                <label className="block text-sm font-medium text-slate-900 dark:text-slate-100">
                   To Account *
                 </label>
                 <select
@@ -261,7 +261,7 @@ export function AddTransactionModal({
                   onChange={(e) =>
                     setFormData({ ...formData, to_account_id: e.target.value })
                   }
-                  className="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 shadow-sm transition focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100 dark:focus:border-zinc-400 dark:focus:ring-zinc-400"
+                  className="mt-1 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm transition focus:border-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:focus:border-slate-400 dark:focus:ring-slate-400"
                 >
                   <option value="">Select an account</option>
                   {toAccountOptions.map((acc) => {
@@ -282,7 +282,7 @@ export function AddTransactionModal({
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                <label className="block text-sm font-medium text-slate-900 dark:text-slate-100">
                   Description
                 </label>
                 <input
@@ -291,13 +291,13 @@ export function AddTransactionModal({
                   onChange={(e) =>
                     setFormData({ ...formData, description: e.target.value })
                   }
-                  className="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 shadow-sm transition focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-zinc-400 dark:focus:ring-zinc-400"
+                  className="mt-1 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder-zinc-400 shadow-sm transition focus:border-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:placeholder-zinc-500 dark:focus:border-slate-400 dark:focus:ring-slate-400"
                   placeholder="e.g., Monthly transfer"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                <label className="block text-sm font-medium text-slate-900 dark:text-slate-100">
                   Detail
                 </label>
                 <textarea
@@ -306,13 +306,13 @@ export function AddTransactionModal({
                     setFormData({ ...formData, detail: e.target.value })
                   }
                   rows={3}
-                  className="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 shadow-sm transition focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-zinc-400 dark:focus:ring-zinc-400"
+                  className="mt-1 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder-zinc-400 shadow-sm transition focus:border-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:placeholder-zinc-500 dark:focus:border-slate-400 dark:focus:ring-slate-400"
                   placeholder="Additional details"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                <label className="block text-sm font-medium text-slate-900 dark:text-slate-100">
                   Date *
                 </label>
                 <input
@@ -322,19 +322,19 @@ export function AddTransactionModal({
                   onChange={(e) =>
                     setFormData({ ...formData, date: e.target.value })
                   }
-                  className="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 shadow-sm transition focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100 dark:focus:border-zinc-400 dark:focus:ring-zinc-400"
+                  className="mt-1 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm transition focus:border-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:focus:border-slate-400 dark:focus:ring-slate-400"
                 />
               </div>
             </div>
           )}
         </form>
 
-        <div className="border-t border-zinc-200 bg-zinc-50 px-6 py-3 dark:border-zinc-800 dark:bg-zinc-800/50">
+        <div className="border-t border-slate-200 bg-slate-50 px-6 py-3 dark:border-slate-800 dark:bg-slate-800/50">
           <div className="flex gap-3">
             <button
               type="button"
               onClick={onClose}
-              className="rounded-lg border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-900 transition hover:bg-zinc-50 disabled:opacity-50 dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800"
+              className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-900 transition hover:bg-slate-50 disabled:opacity-50 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800"
             >
               Cancel
             </button>
@@ -342,7 +342,7 @@ export function AddTransactionModal({
               type="submit"
               disabled={loadingSubmit || loadingAccounts}
               onClick={handleSubmit}
-              className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-zinc-800 disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
+              className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800 disabled:opacity-50 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200"
             >
               {loadingSubmit ? "Creating…" : "Create"}
             </button>

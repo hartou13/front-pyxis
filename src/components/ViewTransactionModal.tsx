@@ -49,10 +49,10 @@ function DetailRow({
 }) {
   return (
     <div className="flex flex-col gap-1">
-      <dt className="text-xs font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+      <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
         {label}
       </dt>
-      <dd className="text-sm text-zinc-900 dark:text-zinc-100">{value}</dd>
+      <dd className="text-sm text-slate-900 dark:text-slate-100">{value}</dd>
     </div>
   );
 }
@@ -74,14 +74,14 @@ function AccountInfo({
 
   return (
     <div className="flex flex-col gap-1">
-      <dt className="text-xs font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+      <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
         {label}
       </dt>
-      <dd className="flex flex-col gap-1 text-sm text-zinc-900 dark:text-zinc-100">
+      <dd className="flex flex-col gap-1 text-sm text-slate-900 dark:text-slate-100">
         <div>
           <span className="font-medium">{name}</span>
         </div>
-        <div className="flex gap-2 text-xs text-zinc-600 dark:text-zinc-400">
+        <div className="flex gap-2 text-xs text-slate-600 dark:text-slate-400">
           <span>Move: {moveType}</span>
           <span>Type: {accountType}</span>
         </div>
@@ -147,15 +147,15 @@ export function ViewTransactionModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-xl border border-zinc-200 bg-white shadow-lg dark:border-zinc-800 dark:bg-zinc-900">
-        <div className="sticky top-0 flex items-center justify-between border-b border-zinc-200 bg-white px-6 py-4 dark:border-zinc-800 dark:bg-zinc-900">
-          <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
+      <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-xl border border-slate-200 bg-white shadow-lg dark:border-slate-800 dark:bg-slate-900">
+        <div className="sticky top-0 flex items-center justify-between border-b border-slate-200 bg-white px-6 py-4 dark:border-slate-800 dark:bg-slate-900">
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-50">
             Transaction Details
           </h2>
           <button
             type="button"
             onClick={onClose}
-            className="text-zinc-400 transition hover:text-zinc-600 dark:hover:text-zinc-300"
+            className="text-slate-400 transition hover:text-slate-600 dark:hover:text-slate-300"
             aria-label="Close modal"
           >
             <svg
@@ -180,7 +180,7 @@ export function ViewTransactionModal({
               {error}
             </p>
           ) : loading ? (
-            <p className="text-sm text-zinc-500 dark:text-zinc-400">
+            <p className="text-sm text-slate-500 dark:text-slate-400">
               Loading transaction details…
             </p>
           ) : transaction ? (
@@ -240,11 +240,11 @@ export function ViewTransactionModal({
           ) : null}
         </div>
 
-        <div className="border-t border-zinc-200 bg-zinc-50 px-6 py-3 dark:border-zinc-800 dark:bg-zinc-800/50">
+        <div className="border-t border-slate-200 bg-slate-50 px-6 py-3 dark:border-slate-800 dark:bg-slate-800/50">
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
+            className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200"
           >
             Close
           </button>

@@ -87,16 +87,16 @@ export function ViewAccountModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="view-account-title"
-        className="relative z-10 flex max-h-[min(90vh,36rem)] w-full max-w-lg flex-col rounded-2xl border border-zinc-200 bg-white shadow-xl dark:border-zinc-800 dark:bg-zinc-900"
+        className="relative z-10 flex max-h-[min(90vh,36rem)] w-full max-w-lg flex-col rounded-2xl border border-slate-200 bg-white shadow-xl dark:border-slate-800 dark:bg-slate-900"
       >
-        <div className="border-b border-zinc-200 px-6 py-4 dark:border-zinc-800">
+        <div className="border-b border-slate-200 px-6 py-4 dark:border-slate-800">
           <h2
             id="view-account-title"
-            className="text-lg font-semibold text-zinc-900 dark:text-zinc-50"
+            className="text-lg font-semibold text-slate-900 dark:text-slate-50"
           >
             {title}
           </h2>
-          <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
             Account details
           </p>
         </div>
@@ -105,10 +105,10 @@ export function ViewAccountModal({
           <dl className="space-y-4">
             {entries.map(([key, value]) => (
               <div key={key}>
-                <dt className="text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+                <dt className="text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">
                   {key.replace(/_/g, " ")}
                 </dt>
-                <dd className="mt-1 whitespace-pre-wrap break-words text-sm text-zinc-900 dark:text-zinc-100">
+                <dd className="mt-1 whitespace-pre-wrap break-words text-sm text-slate-900 dark:text-slate-100">
                   {formatCharacteristicValue(key, value, accounts)}
                 </dd>
               </div>
@@ -116,11 +116,11 @@ export function ViewAccountModal({
           </dl>
         </div>
 
-        <div className="flex flex-wrap items-center justify-end gap-2 border-t border-zinc-200 px-6 py-4 dark:border-zinc-800">
+        <div className="flex flex-wrap items-center justify-end gap-2 border-t border-slate-200 px-6 py-4 dark:border-slate-800">
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-900 hover:bg-zinc-50 dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800"
+            className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-900 hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800"
           >
             Close
           </button>
@@ -129,7 +129,7 @@ export function ViewAccountModal({
             disabled={!canEdit}
             title={canEdit ? "Edit this account" : "Missing account id"}
             onClick={() => onEditFromView(account)}
-            className="inline-flex items-center gap-2 rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-40 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
+            className="inline-flex items-center gap-2 rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-40 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200"
           >
             <svg
               className="h-4 w-4"

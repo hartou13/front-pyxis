@@ -43,31 +43,77 @@ function IconUnknown({ className }: { className?: string }) {
   );
 }
 
+function IconTrendUp({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path d="M2 12c0 5.523 4.477 10 10 10s10-4.477 10-10S17.523 2 12 2 2 6.477 2 12zm8.5-5a1.5 1.5 0 0 1 3 0v3.793l1.646-1.647a1.5 1.5 0 1 1 2.12 2.121l-5 5a1.5 1.5 0 0 1-2.121 0l-5-5a1.5 1.5 0 1 1 2.12-2.121L10.5 10.793V7z" />
+    </svg>
+  );
+}
+
+function IconTrendDown({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path d="M2 12c0 5.523 4.477 10 10 10s10-4.477 10-10S17.523 2 12 2 2 6.477 2 12zm8.5 5a1.5 1.5 0 0 1-3 0v-3.793l-1.646 1.647a1.5 1.5 0 1 1-2.12-2.121l5-5a1.5 1.5 0 0 1 2.121 0l5 5a1.5 1.5 0 1 1-2.12 2.121L10.5 13.207V17z" />
+    </svg>
+  );
+}
+
+function IconTrendFlat({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path d="M2 12c0 5.523 4.477 10 10 10s10-4.477 10-10S17.523 2 12 2 2 6.477 2 12zm3-1.5a1.5 1.5 0 0 1 3 0 1.5 1.5 0 0 1-3 0zm5 0a1.5 1.5 0 0 1 3 0 1.5 1.5 0 0 1-3 0zm5 0a1.5 1.5 0 0 1 3 0 1.5 1.5 0 0 1-3 0z" />
+    </svg>
+  );
+}
+
 function AccountTypeBadge({ value }: { value: string | undefined }) {
   const v = value?.toLowerCase().trim();
   let Icon = IconUnknown;
   let label = value ?? "Unknown";
-  let palette =
-    "bg-zinc-100 text-zinc-700 ring-zinc-200/80 dark:bg-zinc-800 dark:text-zinc-200 dark:ring-zinc-600/50";
+  let palette = "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300";
   if (v === "external") {
     Icon = IconExternal;
     label = "External";
-    palette =
-      "bg-amber-100 text-amber-900 ring-amber-200/90 dark:bg-amber-950/45 dark:text-amber-300 dark:ring-amber-800/45";
+    palette = "bg-amber-100 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300";
   } else if (v === "personal") {
     Icon = IconPersonal;
     label = "Personal";
-    palette =
-      "bg-violet-100 text-violet-800 ring-violet-200/90 dark:bg-violet-950/50 dark:text-violet-300 dark:ring-violet-700/50";
+    palette = "bg-teal-100 text-teal-700 dark:bg-teal-950/40 dark:text-teal-300";
   }
   return (
     <span
-      className={`inline-flex h-8 w-8 items-center justify-center rounded-lg ring-1 ring-inset ${palette}`}
+      className={`inline-flex h-8 w-8 items-center justify-center rounded-lg ${palette}`}
       title={`Account type: ${label}`}
     >
       <Icon className="h-4 w-4" />
       <span className="sr-only">Account type: {label}</span>
     </span>
+  );
+}
+
+function TrendIndicator({ value }: { value: number | undefined }) {
+  if (value === undefined || value === 0) {
+    return (
+      <div className="flex items-center gap-1">
+        <IconTrendFlat className="h-4 w-4 text-slate-400 dark:text-slate-500" />
+        <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Stable</span>
+      </div>
+    );
+  }
+  if (value > 0) {
+    return (
+      <div className="flex items-center gap-1">
+        <IconTrendUp className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+        <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400">+{formatCurrency(value)}</span>
+      </div>
+    );
+  }
+  return (
+    <div className="flex items-center gap-1">
+      <IconTrendDown className="h-4 w-4 text-rose-600 dark:text-rose-400" />
+      <span className="text-xs font-medium text-rose-600 dark:text-rose-400">{formatCurrency(value)}</span>
+    </div>
   );
 }
 
@@ -249,23 +295,43 @@ export default function WelcomePage() {
     void loadEvolution();
   }, [loadEvolution]);
 
+  const totalBalance = accounts?.reduce((sum, acc) => sum + (acc.solde?.remaining ?? 0), 0) ?? 0;
+  const totalEvolution =
+    evolution?.movement.reduce((sum, acc) => sum + (acc.solde?.balance ?? 0), 0) ?? 0;
+
   return (
-    <div className="flex min-h-full flex-1 flex-col gap-6 bg-zinc-50 px-6 py-8 dark:bg-zinc-950">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div className="flex items-center gap-3">
-          <h1 className="text-3xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
-            Welcome
+    <div className="flex min-h-full flex-1 flex-col gap-8 bg-slate-50 px-6 py-8 dark:bg-slate-950 sm:px-8">
+      {/* Header */}
+      <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400">
+            Your Balance
+          </p>
+          <h1 className="mt-1 text-4xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
+            {formatCurrency(totalBalance)}
           </h1>
+          {totalEvolution !== 0 && (
+            <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
+              <span className={totalEvolution > 0 ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"}>
+                {totalEvolution > 0 ? "+" : ""}
+                {formatCurrency(totalEvolution)}
+              </span>
+              {" "}this period
+            </p>
+          )}
+        </div>
+
+        <div className="flex flex-col gap-3 sm:flex-row">
           <button
             type="button"
             onClick={() => void refreshSolde()}
             disabled={refreshing}
-            className="inline-flex items-center gap-2 rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm font-medium text-zinc-900 hover:bg-zinc-50 disabled:opacity-50 disabled:cursor-not-allowed dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800"
+            className="inline-flex items-center gap-2 rounded-lg bg-teal-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-teal-700 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-teal-500 dark:hover:bg-teal-600"
             title="Refresh balance from server"
           >
             {refreshing ? (
               <>
-                <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-zinc-300 border-t-zinc-900 dark:border-zinc-600 dark:border-t-zinc-100" />
+                <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
                 Refreshing…
               </>
             ) : (
@@ -278,223 +344,152 @@ export default function WelcomePage() {
               </>
             )}
           </button>
-        </div>
-
-        {/* Start Date Filter */}
-        <div>
-          <label className="block text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-1">
-            Start Date
-          </label>
-          <input
-            type="date"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-            className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-100"
-          />
+          <div>
+            <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">
+              Period Start
+            </label>
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
+            />
+          </div>
         </div>
       </div>
 
-      {error ? (
-        <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900 dark:border-red-900 dark:bg-red-950/40 dark:text-red-200">
-          {error}
-        </p>
+      {/* Errors */}
+      {error || refreshError || evolutionError ? (
+        <div className="rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900 dark:border-rose-900/50 dark:bg-rose-950/40 dark:text-rose-200">
+          {error || refreshError || evolutionError}
+        </div>
       ) : null}
 
-      {refreshError ? (
-        <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900 dark:border-red-900 dark:bg-red-950/40 dark:text-red-200">
-          {refreshError}
-        </p>
-      ) : null}
-
-      {evolutionError ? (
-        <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900 dark:border-red-900 dark:bg-red-950/40 dark:text-red-200">
-          {evolutionError}
-        </p>
-      ) : null}
-
-      {/* Merged Accounts Table with Evolution Data */}
+      {/* Content */}
       {!loading && accounts && accounts.length > 0 ? (
-        <div>
-          <div className="grid gap-6 lg:grid-cols-3">
-            {/* All Accounts with Movement Evolution */}
-            <div>
-              <h2 className="mb-3 text-lg font-semibold text-zinc-900 dark:text-zinc-50">Accounts</h2>
-              <div className="overflow-x-auto rounded-lg border border-zinc-200 dark:border-zinc-800">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-zinc-200 bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-900">
-                      <th className="px-6 py-3 text-left font-semibold text-zinc-900 dark:text-zinc-50">
-                        Account Name
-                      </th>
-                      <th className="px-6 py-3 text-left font-semibold text-zinc-900 dark:text-zinc-50">
-                        Type
-                      </th>
-                      <th className="px-6 py-3 text-right font-semibold text-zinc-900 dark:text-zinc-50">
-                        Evolution
-                      </th>
-                      <th className="px-6 py-3 text-right font-semibold text-zinc-900 dark:text-zinc-50">
-                        Balance
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {accounts.map((account) => {
-                      const movementAccount = evolution?.movement.find((m) => m.id === account.id);
-                      return (
-                        <tr
-                          key={account.id}
-                          className="border-b border-zinc-200 hover:bg-zinc-50 dark:border-zinc-800 dark:hover:bg-zinc-900/50"
-                        >
-                          <td className="px-6 py-4 text-zinc-900 dark:text-zinc-50">
-                            <button
-                              type="button"
-                              onClick={() => router.push(`/account/${account.id}`)}
-                              className="text-zinc-600 hover:text-zinc-900 hover:underline dark:text-zinc-400 dark:hover:text-zinc-100"
-                            >
-                              {account.account_name}
-                            </button>
-                          </td>
-                          <td className="px-6 py-4">
-                            <AccountTypeBadge value={account.account_type} />
-                          </td>
-                          <td className="px-6 py-4 text-right font-medium text-zinc-900 dark:text-zinc-50">
-                            {movementAccount ? formatCurrency(movementAccount.solde?.balance) : "—"}
-                          </td>
-                          <td className="px-6 py-4 text-right font-medium text-zinc-900 dark:text-zinc-50">
-                            {formatCurrency(account.solde?.remaining ?? 0)}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                    <tr className="border-t-2 border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900/50">
-                      <td colSpan={2} className="px-6 py-3 font-semibold text-zinc-900 dark:text-zinc-50">
-                        Total
-                      </td>
-                      <td className="px-6 py-3 text-right font-semibold text-zinc-900 dark:text-zinc-50">
-                        {formatCurrency(
-                          evolution?.movement.reduce((sum, acc) => sum + (acc.solde?.balance ?? 0), 0) ?? 0
-                        )}
-                      </td>
-                      <td className="px-6 py-3 text-right font-semibold text-zinc-900 dark:text-zinc-50">
-                        {formatCurrency(
-                          accounts.reduce((sum, acc) => sum + (acc.solde?.remaining ?? 0), 0)
-                        )}
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+        <div className="grid gap-8">
+          {/* Accounts Section */}
+          <div>
+            <h2 className="mb-4 text-lg font-semibold text-slate-900 dark:text-slate-50">All Accounts</h2>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {accounts.map((account) => {
+                const movementAccount = evolution?.movement.find((m) => m.id === account.id);
+                const evolution_value = movementAccount?.solde?.balance;
+                return (
+                  <button
+                    key={account.id}
+                    onClick={() => router.push(`/account/${account.id}`)}
+                    className="group rounded-lg border border-slate-200 bg-white p-4 text-left transition hover:border-teal-300 hover:shadow-md dark:border-slate-800 dark:bg-slate-900/50 dark:hover:border-teal-600"
+                  >
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <p className="text-xs font-medium uppercase tracking-widest text-slate-500 dark:text-slate-400">
+                          {account.account_name}
+                        </p>
+                        <p className="mt-1 text-2xl font-bold text-slate-900 dark:text-slate-50">
+                          {formatCurrency(account.solde?.remaining ?? 0)}
+                        </p>
+                      </div>
+                      <AccountTypeBadge value={account.account_type} />
+                    </div>
+                    <div className="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800">
+                      <TrendIndicator value={evolution_value} />
+                      <svg className="h-4 w-4 text-slate-400 transition group-hover:translate-x-0.5 group-hover:text-teal-600 dark:group-hover:text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                  </button>
+                );
+              })}
             </div>
+          </div>
 
-            {/* Income Accounts */}
+          {/* Income & Expense Grid */}
+          <div className="grid gap-8 lg:grid-cols-2">
+            {/* Income */}
             {evolution && evolution.income.length > 0 && (
               <div>
-                <h3 className="mb-3 text-lg font-semibold text-zinc-900 dark:text-zinc-50">Income</h3>
-                <div className="overflow-x-auto rounded-lg border border-zinc-200 dark:border-zinc-800">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="border-b border-zinc-200 bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-900">
-                        <th className="px-6 py-3 text-left font-semibold text-zinc-900 dark:text-zinc-50">
-                          Account Name
-                        </th>
-                        <th className="px-6 py-3 text-right font-semibold text-zinc-900 dark:text-zinc-50">
-                          Balance
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {evolution.income.map((account) => (
-                        <tr
-                          key={account.id}
-                          className="border-b border-zinc-200 hover:bg-zinc-50 dark:border-zinc-800 dark:hover:bg-zinc-900/50"
-                        >
-                          <td className="px-6 py-4 text-zinc-900 dark:text-zinc-50">
-                            <button
-                              type="button"
-                              onClick={() => router.push(`/account/${account.id}`)}
-                              className="text-zinc-600 hover:text-zinc-900 hover:underline dark:text-zinc-400 dark:hover:text-zinc-100"
-                            >
-                              {account.account_name}
-                            </button>
-                          </td>
-                          <td className="px-6 py-4 text-right font-medium text-zinc-900 dark:text-zinc-50">
-                            {formatCurrency(-(account.solde?.balance))}
-                          </td>
-                        </tr>
-                      ))}
-                      <tr className="border-t-2 border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900/50">
-                        <td className="px-6 py-3 font-semibold text-zinc-900 dark:text-zinc-50">
-                          Total
-                        </td>
-                        <td className="px-6 py-3 text-right font-semibold text-zinc-900 dark:text-zinc-50">
-                          {formatCurrency(
-                            -evolution.income.reduce((sum, acc) => sum + (acc.solde?.balance ?? 0), 0)
-                          )}
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+                <h3 className="mb-4 text-lg font-semibold text-emerald-900 dark:text-emerald-50">Income</h3>
+                <div className="space-y-2">
+                  {evolution.income.map((account) => (
+                    <button
+                      key={account.id}
+                      onClick={() => router.push(`/account/${account.id}`)}
+                      className="group w-full rounded-lg border border-slate-200 bg-white p-3 text-left transition hover:border-emerald-300 hover:bg-emerald-50 dark:border-slate-800 dark:bg-slate-900/50 dark:hover:border-emerald-600 dark:hover:bg-emerald-950/20"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm font-medium text-slate-900 dark:text-slate-100">{account.account_name}</p>
+                          <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">{account.account_type}</p>
+                        </div>
+                        <p className="font-semibold text-emerald-600 dark:text-emerald-400">
+                          +{formatCurrency(-(account.solde?.balance))}
+                        </p>
+                      </div>
+                    </button>
+                  ))}
+                  <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-3 dark:border-emerald-800/50 dark:bg-emerald-950/20">
+                    <div className="flex items-center justify-between">
+                      <p className="font-medium text-emerald-900 dark:text-emerald-100">Total Income</p>
+                      <p className="font-semibold text-emerald-600 dark:text-emerald-400">
+                        +{formatCurrency(
+                          -evolution.income.reduce((sum, acc) => sum + (acc.solde?.balance ?? 0), 0)
+                        )}
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
 
-            {/* Expense Accounts */}
+            {/* Expense */}
             {evolution && evolution.expense.length > 0 && (
               <div>
-                <h3 className="mb-3 text-lg font-semibold text-zinc-900 dark:text-zinc-50">Expense</h3>
-                <div className="overflow-x-auto rounded-lg border border-zinc-200 dark:border-zinc-800">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="border-b border-zinc-200 bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-900">
-                        <th className="px-6 py-3 text-left font-semibold text-zinc-900 dark:text-zinc-50">
-                          Account Name
-                        </th>
-                        <th className="px-6 py-3 text-right font-semibold text-zinc-900 dark:text-zinc-50">
-                          Balance
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {evolution.expense.map((account) => (
-                        <tr
-                          key={account.id}
-                          className="border-b border-zinc-200 hover:bg-zinc-50 dark:border-zinc-800 dark:hover:bg-zinc-900/50"
-                        >
-                          <td className="px-6 py-4 text-zinc-900 dark:text-zinc-50">
-                            <button
-                              type="button"
-                              onClick={() => router.push(`/account/${account.id}`)}
-                              className="text-zinc-600 hover:text-zinc-900 hover:underline dark:text-zinc-400 dark:hover:text-zinc-100"
-                            >
-                              {account.account_name}
-                            </button>
-                          </td>
-                          <td className="px-6 py-4 text-right font-medium text-zinc-900 dark:text-zinc-50">
-                            {formatCurrency(account.solde?.balance)}
-                          </td>
-                        </tr>
-                      ))}
-                      <tr className="border-t-2 border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900/50">
-                        <td className="px-6 py-3 font-semibold text-zinc-900 dark:text-zinc-50">
-                          Total
-                        </td>
-                        <td className="px-6 py-3 text-right font-semibold text-zinc-900 dark:text-zinc-50">
-                          {formatCurrency(
-                            evolution.expense.reduce((sum, acc) => sum + (acc.solde?.balance ?? 0), 0)
-                          )}
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+                <h3 className="mb-4 text-lg font-semibold text-rose-900 dark:text-rose-50">Expenses</h3>
+                <div className="space-y-2">
+                  {evolution.expense.map((account) => (
+                    <button
+                      key={account.id}
+                      onClick={() => router.push(`/account/${account.id}`)}
+                      className="group w-full rounded-lg border border-slate-200 bg-white p-3 text-left transition hover:border-rose-300 hover:bg-rose-50 dark:border-slate-800 dark:bg-slate-900/50 dark:hover:border-rose-600 dark:hover:bg-rose-950/20"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm font-medium text-slate-900 dark:text-slate-100">{account.account_name}</p>
+                          <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">{account.account_type}</p>
+                        </div>
+                        <p className="font-semibold text-rose-600 dark:text-rose-400">
+                          {formatCurrency(account.solde?.balance)}
+                        </p>
+                      </div>
+                    </button>
+                  ))}
+                  <div className="rounded-lg border border-rose-200 bg-rose-50 p-3 dark:border-rose-800/50 dark:bg-rose-950/20">
+                    <div className="flex items-center justify-between">
+                      <p className="font-medium text-rose-900 dark:text-rose-100">Total Expenses</p>
+                      <p className="font-semibold text-rose-600 dark:text-rose-400">
+                        {formatCurrency(
+                          evolution.expense.reduce((sum, acc) => sum + (acc.solde?.balance ?? 0), 0)
+                        )}
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
           </div>
         </div>
       ) : loading && accounts === null ? (
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">Loading account balances…</p>
+        <div className="flex items-center justify-center py-12">
+          <div className="flex flex-col items-center gap-3">
+            <div className="h-8 w-8 animate-spin rounded-full border-2 border-slate-300 border-t-teal-600 dark:border-slate-600 dark:border-t-teal-400" />
+            <p className="text-sm text-slate-600 dark:text-slate-400">Loading account balances…</p>
+          </div>
+        </div>
       ) : !loading && accounts && accounts.length === 0 ? (
-        <p className="text-sm text-zinc-600 dark:text-zinc-400">No accounts found.</p>
+        <div className="rounded-lg border border-slate-200 bg-white p-8 text-center dark:border-slate-800 dark:bg-slate-900/50">
+          <p className="text-sm text-slate-600 dark:text-slate-400">No accounts found.</p>
+        </div>
       ) : null}
     </div>
   );

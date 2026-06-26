@@ -72,7 +72,7 @@ function MoveTypeIcon({ value }: { value: string | undefined }) {
   let Icon = IconUnknown;
   let label = value ?? "Unknown";
   let palette =
-    "bg-zinc-100 text-zinc-700 ring-zinc-200/80 dark:bg-zinc-800 dark:text-zinc-200 dark:ring-zinc-600/50";
+    "bg-slate-100 text-slate-700 ring-slate-200/80 dark:bg-slate-800 dark:text-slate-200 dark:ring-slate-600/50";
   if (v === "income") {
     Icon = IconIncome;
     label = "Income";
@@ -105,7 +105,7 @@ function AccountTypeIcon({ value }: { value: string | undefined }) {
   let Icon = IconUnknown;
   let label = value ?? "Unknown";
   let palette =
-    "bg-zinc-100 text-zinc-700 ring-zinc-200/80 dark:bg-zinc-800 dark:text-zinc-200 dark:ring-zinc-600/50";
+    "bg-slate-100 text-slate-700 ring-slate-200/80 dark:bg-slate-800 dark:text-slate-200 dark:ring-slate-600/50";
   if (v === "external") {
     Icon = IconExternal;
     label = "External";
@@ -465,26 +465,26 @@ export default function AccountDetailPage() {
 
   if (loading && !account) {
     return (
-      <div className="flex min-h-full flex-1 flex-col gap-6 bg-zinc-50 px-6 py-8 dark:bg-zinc-950">
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">Loading account…</p>
+      <div className="flex min-h-full flex-1 flex-col gap-6 bg-slate-50 px-6 py-8 dark:bg-slate-950">
+        <p className="text-sm text-slate-500 dark:text-slate-400">Loading account…</p>
       </div>
     );
   }
 
   if (error || !account) {
     return (
-      <div className="flex min-h-full flex-1 flex-col gap-6 bg-zinc-50 px-6 py-8 dark:bg-zinc-950">
+      <div className="flex min-h-full flex-1 flex-col gap-6 bg-slate-50 px-6 py-8 dark:bg-slate-950">
         {error ? (
           <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900 dark:border-red-900 dark:bg-red-950/40 dark:text-red-200">
             {error}
           </p>
         ) : (
-          <p className="text-sm text-zinc-600 dark:text-zinc-400">Account not found.</p>
+          <p className="text-sm text-slate-600 dark:text-slate-400">Account not found.</p>
         )}
         <button
           type="button"
           onClick={() => router.back()}
-          className="w-fit rounded-lg border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-900 transition hover:bg-zinc-50 dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800"
+          className="w-fit rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-900 transition hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800"
         >
           Go Back
         </button>
@@ -503,20 +503,20 @@ export default function AccountDetailPage() {
     : [];
 
   return (
-    <div className="flex min-h-full flex-1 flex-col gap-6 bg-zinc-50 px-6 py-8 dark:bg-zinc-950">
+    <div className="flex min-h-full flex-1 flex-col gap-6 bg-slate-50 px-6 py-8 dark:bg-slate-950">
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <button
             type="button"
             onClick={() => router.back()}
-            className="text-zinc-600 transition hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
+            className="text-slate-600 transition hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
             aria-label="Go back"
           >
             <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
             </svg>
           </button>
-          <h1 className="text-3xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
+          <h1 className="text-3xl font-semibold tracking-tight text-slate-900 dark:text-slate-50">
             {accountName}
           </h1>
         </div>
@@ -524,7 +524,7 @@ export default function AccountDetailPage() {
           <button
             type="button"
             onClick={() => setEditOpen(true)}
-            className="rounded-lg border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-900 transition hover:bg-zinc-50 dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800"
+            className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-900 transition hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800"
           >
             Edit
           </button>
@@ -599,54 +599,54 @@ export default function AccountDetailPage() {
         }}
       />
 
-      <div className="rounded-lg border border-zinc-200 bg-white p-8 dark:border-zinc-800 dark:bg-zinc-900">
+      <div className="rounded-lg border border-slate-200 bg-white p-8 dark:border-slate-800 dark:bg-slate-900">
         <div className="grid gap-6 sm:grid-cols-2">
           <div>
-            <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400">Account ID</p>
-            <p className="mt-1 text-lg text-zinc-900 dark:text-zinc-100 font-mono text-xs break-all">
+            <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Account ID</p>
+            <p className="mt-1 text-lg text-slate-900 dark:text-slate-100 font-mono text-xs break-all">
               {account.id}
             </p>
           </div>
 
           <div>
-            <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400">User ID</p>
-            <p className="mt-1 text-lg text-zinc-900 dark:text-zinc-100 font-mono text-xs break-all">
+            <p className="text-sm font-medium text-slate-600 dark:text-slate-400">User ID</p>
+            <p className="mt-1 text-lg text-slate-900 dark:text-slate-100 font-mono text-xs break-all">
               {account.user_id}
             </p>
           </div>
 
           <div>
-            <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400">Move Type</p>
+            <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Move Type</p>
             <div className="mt-2">
               <MoveTypeIcon value={moveType} />
             </div>
           </div>
 
           <div>
-            <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400">Account Type</p>
+            <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Account Type</p>
             <div className="mt-2">
               <AccountTypeIcon value={accType} />
             </div>
           </div>
 
           <div>
-            <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400">Created At</p>
-            <p className="mt-1 text-sm text-zinc-900 dark:text-zinc-100">
+            <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Created At</p>
+            <p className="mt-1 text-sm text-slate-900 dark:text-slate-100">
               {formatDate(account.created_at)}
             </p>
           </div>
 
           <div>
-            <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400">Updated At</p>
-            <p className="mt-1 text-sm text-zinc-900 dark:text-zinc-100">
+            <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Updated At</p>
+            <p className="mt-1 text-sm text-slate-900 dark:text-slate-100">
               {formatDate(account.updated_at)}
             </p>
           </div>
 
           {account.super_account_id && (
             <div>
-              <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400">Super Account ID</p>
-              <p className="mt-1 text-sm text-zinc-900 dark:text-zinc-100 font-mono text-xs break-all">
+              <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Super Account ID</p>
+              <p className="mt-1 text-sm text-slate-900 dark:text-slate-100 font-mono text-xs break-all">
                 {account.super_account_id}
               </p>
             </div>
@@ -656,7 +656,7 @@ export default function AccountDetailPage() {
 
       {subAccounts.length > 0 && (
         <div>
-          <h2 className="text-xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50 mb-4">
+          <h2 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-slate-50 mb-4">
             Sub-Accounts
           </h2>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -671,13 +671,13 @@ export default function AccountDetailPage() {
               return (
                 <div
                   key={subAccount.id}
-                  className="flex items-center gap-3 rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900"
+                  className="flex items-center gap-3 rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900"
                 >
                   <div className="flex gap-2">
                     <MoveTypeIcon value={subMoveType} />
                     <AccountTypeIcon value={subAccType} />
                   </div>
-                  <p className="min-w-0 flex-1 text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate">
+                  <p className="min-w-0 flex-1 text-sm font-medium text-slate-900 dark:text-slate-100 truncate">
                     {subName}
                   </p>
                 </div>
@@ -688,16 +688,16 @@ export default function AccountDetailPage() {
       )}
 
       {subAccounts.length === 0 && (
-        <p className="text-sm text-zinc-600 dark:text-zinc-400">No sub-accounts.</p>
+        <p className="text-sm text-slate-600 dark:text-slate-400">No sub-accounts.</p>
       )}
 
       {moveType?.toLowerCase() === "movement" ? (
-        <div className="rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
-          <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400">Current Balance</p>
+        <div className="rounded-lg border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900">
+          <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Current Balance</p>
           {soldeError ? (
             <p className="mt-2 text-sm text-red-600 dark:text-red-400">{soldeError}</p>
           ) : soldeLoading ? (
-            <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">Loading balance…</p>
+            <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Loading balance…</p>
           ) : solde !== null ? (
             <p
               className={`mt-2 text-3xl font-semibold ${
@@ -711,17 +711,17 @@ export default function AccountDetailPage() {
           ) : null}
         </div>
       ) : (
-        <div className="rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="rounded-lg border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900">
           <div className="mb-6">
-            <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-4">Balance Tendency</p>
+            <p className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-4">Balance Tendency</p>
             <div className="flex gap-2">
               <button
                 type="button"
                 onClick={() => setTendencyView("monthly")}
                 className={`px-3 py-2 text-sm font-medium rounded-lg transition ${
                   tendencyView === "monthly"
-                    ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900"
-                    : "bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700"
+                    ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
+                    : "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
                 }`}
               >
                 Monthly
@@ -731,8 +731,8 @@ export default function AccountDetailPage() {
                 onClick={() => setTendencyView("weekly")}
                 className={`px-3 py-2 text-sm font-medium rounded-lg transition ${
                   tendencyView === "weekly"
-                    ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900"
-                    : "bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700"
+                    ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
+                    : "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
                 }`}
               >
                 Weekly
@@ -742,8 +742,8 @@ export default function AccountDetailPage() {
                 onClick={() => setTendencyView("daily")}
                 className={`px-3 py-2 text-sm font-medium rounded-lg transition ${
                   tendencyView === "daily"
-                    ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900"
-                    : "bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700"
+                    ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
+                    : "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
                 }`}
               >
                 Daily
@@ -754,7 +754,7 @@ export default function AccountDetailPage() {
           {tendencyError ? (
             <p className="text-sm text-red-600 dark:text-red-400">{tendencyError}</p>
           ) : tendencyLoading ? (
-            <p className="text-sm text-zinc-500 dark:text-zinc-400">Loading balance tendency…</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">Loading balance tendency…</p>
           ) : tendencyView === "monthly" && monthlyData && monthlyData.length > 0 ? (
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={monthlyData} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
@@ -861,20 +861,20 @@ export default function AccountDetailPage() {
               </LineChart>
             </ResponsiveContainer>
           ) : (
-            <p className="text-sm text-zinc-600 dark:text-zinc-400">No balance data available.</p>
+            <p className="text-sm text-slate-600 dark:text-slate-400">No balance data available.</p>
           )}
         </div>
       )}
 
       <div>
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
+          <h2 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-slate-50">
             Move History
           </h2>
           <button
             type="button"
             onClick={() => setAddMoveOpen(true)}
-            className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
+            className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200"
           >
             Add Move
           </button>
@@ -887,13 +887,13 @@ export default function AccountDetailPage() {
         ) : null}
 
         {moveHistoryLoading && moveHistory === null ? (
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">
+          <p className="text-sm text-slate-500 dark:text-slate-400">
             Loading move history…
           </p>
         ) : null}
 
         {!moveHistoryLoading && moveHistory && moveHistory.length === 0 ? (
-          <p className="text-sm text-zinc-600 dark:text-zinc-400">
+          <p className="text-sm text-slate-600 dark:text-slate-400">
             No moves found.
           </p>
         ) : null}
