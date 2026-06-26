@@ -187,17 +187,13 @@ function MoveRow({
       ? getString(move.to_account as Record<string, unknown>, "account_name")
       : undefined;
 
-  // Determine if this is outgoing (current account is from_account)
   const isOutgoing = fromAccountId === currentAccountId;
-
-  // Get the counterparty account details
   const counterpartyName = isOutgoing ? toAccountName : fromAccountName;
   const counterpartyLabel = isOutgoing ? "To" : "From";
-  const moveType = getString((isOutgoing ? move.to_account:move.from_account) as Record<string, unknown>, "account_move_type")
-
+  const moveType = getString((isOutgoing ? move.to_account : move.from_account) as Record<string, unknown>, "account_move_type");
 
   return (
-    <tr className="border-b border-slate-200 hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-800/50">
+    <tr className="border-b border-slate-200 transition hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800/50">
       <td className="px-4 py-3 text-sm text-slate-900 dark:text-slate-100">
         {description}
       </td>
@@ -218,7 +214,7 @@ function MoveRow({
         </div>
       </td>
       <td
-        className={`px-4 py-3 text-right text-sm font-medium ${
+        className={`px-4 py-3 text-right text-sm font-semibold ${
           isOutgoing
             ? "text-red-600 dark:text-red-400"
             : "text-emerald-600 dark:text-emerald-400"
@@ -251,7 +247,7 @@ function MoveRow({
           type="button"
           onClick={() => onDelete(move)}
           disabled={!id}
-          className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-slate-600 transition hover:bg-red-50 hover:text-red-700 disabled:cursor-not-allowed disabled:opacity-40 dark:text-slate-400 dark:hover:bg-red-950/40 dark:hover:text-red-400"
+          className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-slate-600 transition hover:bg-rose-50 hover:text-rose-700 disabled:cursor-not-allowed disabled:opacity-40 dark:text-slate-400 dark:hover:bg-rose-950/40 dark:hover:text-rose-400"
           aria-label="Delete move"
           title={id ? "Delete move" : "Missing move id"}
         >
@@ -259,6 +255,68 @@ function MoveRow({
         </button>
       </td>
     </tr>
+  );
+}
+
+function PaginationPageNumbers({
+  currentPage,
+  totalPages,
+  onPageChange,
+  disabled,
+}: {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+  disabled: boolean;
+}) {
+  const pages = new Set<number>();
+  pages.add(1);
+  pages.add(totalPages);
+  pages.add(currentPage);
+  if (currentPage > 1) pages.add(currentPage - 1);
+  if (currentPage < totalPages) pages.add(currentPage + 1);
+
+  const sortedPages = Array.from(pages).sort((a, b) => a - b);
+
+  const renderPages: (number | string)[] = [];
+  for (let i = 0; i < sortedPages.length; i++) {
+    renderPages.push(sortedPages[i]);
+    if (i < sortedPages.length - 1 && sortedPages[i + 1] - sortedPages[i] > 1) {
+      renderPages.push("...");
+    }
+  }
+
+  return (
+    <div className="flex items-center gap-1">
+      {renderPages.map((page, idx) => {
+        if (page === "...") {
+          return (
+            <div key={`ellipsis-${idx}`} className="px-2 py-1 text-sm text-slate-500 dark:text-slate-400">
+              …
+            </div>
+          );
+        }
+
+        const pageNum = page as number;
+        const isActive = pageNum === currentPage;
+
+        return (
+          <button
+            key={pageNum}
+            type="button"
+            onClick={() => onPageChange(pageNum)}
+            disabled={disabled}
+            className={`h-8 min-w-8 rounded-lg px-2 text-sm font-medium transition ${
+              isActive
+                ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
+                : "border border-slate-300 bg-white text-slate-900 hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800"
+            } disabled:cursor-not-allowed disabled:opacity-50`}
+          >
+            {pageNum}
+          </button>
+        );
+      })}
+    </div>
   );
 }
 
@@ -293,9 +351,11 @@ export function AccountMoveHistoryTable({
     return null;
   }
 
+  const totalPages = Math.ceil(total / pageSize);
+
   return (
-    <>
-      <div className="overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-800">
+    <div className="space-y-4">
+      <div className="overflow-hidden rounded-lg border border-slate-200 dark:border-slate-800">
         <table className="w-full text-sm">
           <thead className="border-b border-slate-200 bg-slate-100 dark:border-slate-800 dark:bg-slate-800">
             <tr>
@@ -316,7 +376,7 @@ export function AccountMoveHistoryTable({
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-zinc-200 bg-white dark:divide-zinc-800 dark:bg-slate-900">
+          <tbody className="divide-y divide-slate-200 bg-white dark:divide-slate-700 dark:bg-slate-900">
             {moves.map((move, index) => (
               <MoveRow
                 key={
@@ -333,18 +393,18 @@ export function AccountMoveHistoryTable({
         </table>
       </div>
 
-      <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-3 dark:border-slate-800 dark:bg-slate-900">
-        <div className="flex items-center gap-4">
-          <div>
+      <div className="flex flex-col gap-4 rounded-lg border border-slate-200 bg-white px-4 py-3 dark:border-slate-800 dark:bg-slate-900 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+          <div className="flex items-center gap-3">
             <label htmlFor="movePageSize" className="text-sm font-medium text-slate-700 dark:text-slate-300">
-              Items per page:
+              Per page:
             </label>
             <select
               id="movePageSize"
               value={pageSize}
               onChange={(e) => onPageSizeChange(Number(e.target.value))}
               disabled={loading}
-              className="ml-2 rounded border border-slate-300 bg-white px-2 py-1 text-sm text-slate-900 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
+              className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 transition hover:border-slate-400 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:hover:border-slate-500"
             >
               <option value={5}>5</option>
               <option value={10}>10</option>
@@ -352,7 +412,7 @@ export function AccountMoveHistoryTable({
               <option value={50}>50</option>
             </select>
           </div>
-          <div className="text-sm text-slate-600 dark:text-slate-400">
+          <div className="text-sm font-medium text-slate-600 dark:text-slate-400">
             {total > 0
               ? `${(currentPage - 1) * pageSize + 1}–${Math.min(
                   currentPage * pageSize,
@@ -362,45 +422,31 @@ export function AccountMoveHistoryTable({
           </div>
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <button
             type="button"
             onClick={() => onPageChange(currentPage - 1)}
             disabled={loading || currentPage <= 1}
-            className="rounded border border-slate-300 bg-white px-3 py-1 text-sm font-medium text-slate-900 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800"
+            className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-900 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800"
           >
             Previous
           </button>
-          <div className="flex items-center gap-1">
-            {Array.from(
-              { length: Math.ceil(total / pageSize) },
-              (_, i) => i + 1,
-            ).map((page) => (
-              <button
-                key={page}
-                type="button"
-                onClick={() => onPageChange(page)}
-                disabled={loading}
-                className={`h-8 w-8 rounded text-sm font-medium transition ${
-                  page === currentPage
-                    ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
-                    : "border border-slate-300 bg-white text-slate-900 hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800"
-                } disabled:cursor-not-allowed disabled:opacity-50`}
-              >
-                {page}
-              </button>
-            ))}
-          </div>
+          <PaginationPageNumbers
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={onPageChange}
+            disabled={loading}
+          />
           <button
             type="button"
             onClick={() => onPageChange(currentPage + 1)}
-            disabled={loading || currentPage >= Math.ceil(total / pageSize)}
-            className="rounded border border-slate-300 bg-white px-3 py-1 text-sm font-medium text-slate-900 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800"
+            disabled={loading || currentPage >= totalPages}
+            className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-900 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800"
           >
             Next
           </button>
         </div>
       </div>
-    </>
+    </div>
   );
 }
