@@ -44,17 +44,37 @@ function IconUnknown({ className }: { className?: string }) {
 }
 
 function IconTrendUp({ className }: { className?: string }) {
+  const [isDark, setIsDark] = useState(false);
+  useEffect(() => {
+    setIsDark(document.documentElement.classList.contains("dark"));
+    const observer = new MutationObserver(() => {
+      setIsDark(document.documentElement.classList.contains("dark"));
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+    return () => observer.disconnect();
+  }, []);
   return (
-    <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-      <path d="M2 12c0 5.523 4.477 10 10 10s10-4.477 10-10S17.523 2 12 2 2 6.477 2 12zm8.5-5a1.5 1.5 0 0 1 3 0v3.793l1.646-1.647a1.5 1.5 0 1 1 2.12 2.121l-5 5a1.5 1.5 0 0 1-2.121 0l-5-5a1.5 1.5 0 1 1 2.12-2.121L10.5 10.793V7z" />
+    <svg className={className} viewBox="0 0 24 24" aria-hidden>
+      <circle cx="12" cy="12" r="10" fill="currentColor" />
+      <path fill={isDark ? "black" : "white"} d="M12 8l4 5h-3v3h-2v-3H8l4-5z" />
     </svg>
   );
 }
 
 function IconTrendDown({ className }: { className?: string }) {
+  const [isDark, setIsDark] = useState(false);
+  useEffect(() => {
+    setIsDark(document.documentElement.classList.contains("dark"));
+    const observer = new MutationObserver(() => {
+      setIsDark(document.documentElement.classList.contains("dark"));
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+    return () => observer.disconnect();
+  }, []);
   return (
-    <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-      <path d="M2 12c0 5.523 4.477 10 10 10s10-4.477 10-10S17.523 2 12 2 2 6.477 2 12zm8.5 5a1.5 1.5 0 0 1-3 0v-3.793l-1.646 1.647a1.5 1.5 0 1 1-2.12-2.121l5-5a1.5 1.5 0 0 1 2.121 0l5 5a1.5 1.5 0 1 1-2.12 2.121L10.5 13.207V17z" />
+    <svg className={className} viewBox="0 0 24 24" aria-hidden>
+      <circle cx="12" cy="12" r="10" fill="currentColor" />
+      <path fill={isDark ? "black" : "white"} d="M12 16l-4-5h3v-3h2v3h3l-4 5z" />
     </svg>
   );
 }
@@ -96,23 +116,23 @@ function TrendIndicator({ value }: { value: number | undefined }) {
   if (value === undefined || value === 0) {
     return (
       <div className="flex items-center gap-1">
-        <IconTrendFlat className="h-4 w-4 text-slate-400 dark:text-slate-500" />
-        <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Stable</span>
+        <IconTrendFlat className="h-4 w-4 flex-shrink-0 text-slate-400 dark:text-slate-500" />
+        <span className="text-xs font-medium leading-none text-slate-500 dark:text-slate-400">Stable</span>
       </div>
     );
   }
   if (value > 0) {
     return (
       <div className="flex items-center gap-1">
-        <IconTrendUp className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-        <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400">+{formatCurrency(value)}</span>
+        <IconTrendUp className="h-4 w-4 flex-shrink-0 text-emerald-600 dark:text-emerald-400" />
+        <span className="text-xs font-medium leading-none text-emerald-600 dark:text-emerald-400">+{formatCurrency(value)}</span>
       </div>
     );
   }
   return (
     <div className="flex items-center gap-1">
-      <IconTrendDown className="h-4 w-4 text-rose-600 dark:text-rose-400" />
-      <span className="text-xs font-medium text-rose-600 dark:text-rose-400">{formatCurrency(value)}</span>
+      <IconTrendDown className="h-4 w-4 flex-shrink-0 text-rose-600 dark:text-rose-400" />
+      <span className="text-xs font-medium leading-none text-rose-600 dark:text-rose-400">{formatCurrency(value)}</span>
     </div>
   );
 }
