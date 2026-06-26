@@ -1,5 +1,4 @@
-import axios from "axios";
-import { getApiBaseUrl } from "@/lib/auth-client";
+import { apiClient } from "@/lib/api-client";
 import { getSession } from "@/lib/session";
 
 /** GET /account — Bearer token, matches Pyxis Postman "get user accounts". */
@@ -8,7 +7,7 @@ export async function fetchAccounts(): Promise<unknown> {
   if (!session) {
     throw new Error("Not authenticated");
   }
-  const { data } = await axios.get(`${getApiBaseUrl()}/account`, {
+  const { data } = await apiClient.get(`/account`, {
     headers: {
       Authorization: `Bearer ${session.token}`,
     },
@@ -22,7 +21,7 @@ export async function fetchAccount(id: string): Promise<unknown> {
   if (!session) {
     throw new Error("Not authenticated");
   }
-  const { data } = await axios.get(`${getApiBaseUrl()}/account/${encodeURIComponent(id)}`, {
+  const { data } = await apiClient.get(`/account/${encodeURIComponent(id)}`, {
     headers: {
       Authorization: `Bearer ${session.token}`,
     },
@@ -45,9 +44,9 @@ export async function fetchAccountMoveHistory(id: string, page?: number, limit?:
   }
   const query = params.toString();
   const url = query
-    ? `${getApiBaseUrl()}/account/${encodeURIComponent(id)}/move-history?${query}`
-    : `${getApiBaseUrl()}/account/${encodeURIComponent(id)}/move-history`;
-  const { data } = await axios.get(url, {
+    ? `/account/${encodeURIComponent(id)}/move-history?${query}`
+    : `/account/${encodeURIComponent(id)}/move-history`;
+  const { data } = await apiClient.get(url, {
     headers: {
       Authorization: `Bearer ${session.token}`,
     },
@@ -61,7 +60,7 @@ export async function fetchAccountSolde(id: string): Promise<unknown> {
   if (!session) {
     throw new Error("Not authenticated");
   }
-  const { data } = await axios.get(`${getApiBaseUrl()}/account/${encodeURIComponent(id)}/solde`, {
+  const { data } = await apiClient.get(`/account/${encodeURIComponent(id)}/solde`, {
     headers: {
       Authorization: `Bearer ${session.token}`,
     },
@@ -75,7 +74,7 @@ export async function fetchAccountTendency(id: string): Promise<unknown> {
   if (!session) {
     throw new Error("Not authenticated");
   }
-  const { data } = await axios.get(`${getApiBaseUrl()}/account/${encodeURIComponent(id)}/tendency`, {
+  const { data } = await apiClient.get(`/account/${encodeURIComponent(id)}/tendency`, {
     headers: {
       Authorization: `Bearer ${session.token}`,
     },
@@ -89,7 +88,7 @@ export async function fetchAccountWeekTendency(id: string): Promise<unknown> {
   if (!session) {
     throw new Error("Not authenticated");
   }
-  const { data } = await axios.get(`${getApiBaseUrl()}/account/${encodeURIComponent(id)}/week-tendency`, {
+  const { data } = await apiClient.get(`/account/${encodeURIComponent(id)}/week-tendency`, {
     headers: {
       Authorization: `Bearer ${session.token}`,
     },
@@ -103,7 +102,7 @@ export async function fetchAccountDayTendency(id: string): Promise<unknown> {
   if (!session) {
     throw new Error("Not authenticated");
   }
-  const { data } = await axios.get(`${getApiBaseUrl()}/account/${encodeURIComponent(id)}/day-tendency`, {
+  const { data } = await apiClient.get(`/account/${encodeURIComponent(id)}/day-tendency`, {
     headers: {
       Authorization: `Bearer ${session.token}`,
     },
@@ -126,7 +125,7 @@ export async function createAccount(
   if (!session) {
     throw new Error("Not authenticated");
   }
-  const { data } = await axios.post(`${getApiBaseUrl()}/account`, body, {
+  const { data } = await apiClient.post(`/account`, body, {
     headers: {
       Authorization: `Bearer ${session.token}`,
       "Content-Type": "application/json",
@@ -144,8 +143,8 @@ export async function updateAccount(
   if (!session) {
     throw new Error("Not authenticated");
   }
-  const { data } = await axios.put(
-    `${getApiBaseUrl()}/account/${encodeURIComponent(id)}`,
+  const { data } = await apiClient.put(
+    `/account/${encodeURIComponent(id)}`,
     body,
     {
       headers: {
@@ -163,8 +162,8 @@ export async function deleteAccount(id: string): Promise<unknown> {
   if (!session) {
     throw new Error("Not authenticated");
   }
-  const { data } = await axios.delete(
-    `${getApiBaseUrl()}/account/${encodeURIComponent(id)}`,
+  const { data } = await apiClient.delete(
+    `/account/${encodeURIComponent(id)}`,
     {
       headers: {
         Authorization: `Bearer ${session.token}`,
@@ -202,7 +201,7 @@ export async function fetchSoldeEvolution(startDate: string, endDate: string): P
   const params = new URLSearchParams();
   params.append("start_date", startDate);
   params.append("end_date", endDate);
-  const { data } = await axios.get(`${getApiBaseUrl()}/solde/evolution?${params.toString()}`, {
+  const { data } = await apiClient.get(`/solde/evolution?${params.toString()}`, {
     headers: {
       Authorization: `Bearer ${session.token}`,
     },

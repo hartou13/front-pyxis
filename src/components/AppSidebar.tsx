@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { clearSession } from "@/lib/session";
 
 const STORAGE_KEY = "pyxis_sidebar_collapsed";
 
@@ -46,14 +47,28 @@ function IconChevronRight({ className }: { className?: string }) {
   );
 }
 
-const nav = [
+function IconLogout({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" aria-hidden>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-9a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 4.5 21h9a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3 3m0 0-3 3m3-3H8.25" />
+    </svg>
+  );
+}
+
+type NavItem =
+  | { href: string; label: string; Icon: ({ className }: { className?: string }) => React.ReactNode; action?: false }
+  | { href: string; label: string; Icon: ({ className }: { className?: string }) => React.ReactNode; action: true };
+
+const nav: NavItem[] = [
   { href: "/welcome", label: "Welcome", Icon: IconHome },
   { href: "/accounts", label: "Accounts", Icon: IconAccounts },
   { href: "/transactions", label: "Transactions", Icon: IconTransactions },
-] as const;
+  { href: "#logoff", label: "Logoff", Icon: IconLogout, action: true },
+];
 
 export function AppSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [collapsed, setCollapsed] = useState(false);
 
   useEffect(() => {
@@ -75,6 +90,11 @@ export function AppSidebar() {
       }
       return next;
     });
+  }
+
+  function handleLogoff() {
+    clearSession();
+    router.push("/login");
   }
 
   return (
@@ -100,8 +120,29 @@ export function AppSidebar() {
       </div>
 
       <nav className="flex flex-1 flex-col gap-0.5 p-2" aria-label="Main">
-        {nav.map(({ href, label, Icon }) => {
+        {nav.map(({ href, label, Icon, action }) => {
           const active = pathname === href;
+          if (action) {
+            return (
+              <button
+                key={label}
+                onClick={handleLogoff}
+                title={collapsed ? label : undefined}
+                className={`flex w-full items-center gap-3 rounded-lg py-2.5 text-sm font-medium transition ${
+                  collapsed ? "justify-center px-0" : "px-3"
+                } text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800`}
+              >
+                <Icon className="h-5 w-5 shrink-0" />
+                <span
+                  className={`truncate transition-opacity duration-200 ${
+                    collapsed ? "sr-only" : "opacity-100"
+                  }`}
+                >
+                  {label}
+                </span>
+              </button>
+            );
+          }
           return (
             <Link
               key={href}

@@ -1,10 +1,9 @@
 "use client";
 
 import axios from "axios";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { getApiBaseUrl } from "@/lib/auth-client";
+import { apiClient } from "@/lib/api-client";
 import { getSession } from "@/lib/session";
 import { fetchSoldeEvolution } from "@/lib/accounts-api";
 
@@ -134,7 +133,7 @@ export default function WelcomePage() {
       if (!session) {
         throw new Error("Not authenticated");
       }
-      const { data } = await axios.get(`${getApiBaseUrl()}/solde`, {
+      const { data } = await apiClient.get(`/solde`, {
         headers: {
           Authorization: `Bearer ${session.token}`,
         },
@@ -215,7 +214,7 @@ export default function WelcomePage() {
       if (!session) {
         throw new Error("Not authenticated");
       }
-      await axios.post(`${getApiBaseUrl()}/solde/refresh`, {}, {
+      await apiClient.post(`/solde/refresh`, {}, {
         headers: {
           Authorization: `Bearer ${session.token}`,
         },
@@ -497,13 +496,6 @@ export default function WelcomePage() {
       ) : !loading && accounts && accounts.length === 0 ? (
         <p className="text-sm text-zinc-600 dark:text-zinc-400">No accounts found.</p>
       ) : null}
-
-      <Link
-        href="/"
-        className="text-sm font-medium text-zinc-900 underline-offset-4 hover:underline dark:text-zinc-100"
-      >
-        Home
-      </Link>
     </div>
   );
 }

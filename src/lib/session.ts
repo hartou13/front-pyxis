@@ -34,3 +34,9 @@ export function getSession(): PyxisSession | null {
 export function hasValidSession(): boolean {
   return getSession() !== null;
 }
+
+export function clearSession(): void {
+  if (typeof window !== "undefined") {
+    localStorage.removeItem(PYXIS_SESSION_KEY);
+  }
+}

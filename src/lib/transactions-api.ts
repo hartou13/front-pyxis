@@ -1,5 +1,4 @@
-import axios from "axios";
-import { getApiBaseUrl } from "@/lib/auth-client";
+import { apiClient } from "@/lib/api-client";
 import { getSession } from "@/lib/session";
 
 /** GET /move — Bearer token, fetch all transactions with optional pagination */
@@ -16,8 +15,8 @@ export async function fetchTransactions(page?: number, limit?: number): Promise<
     params.append("limit", String(limit));
   }
   const query = params.toString();
-  const url = query ? `${getApiBaseUrl()}/move?${query}` : `${getApiBaseUrl()}/move`;
-  const { data } = await axios.get(url, {
+  const url = query ? `/move?${query}` : `/move`;
+  const { data } = await apiClient.get(url, {
     headers: {
       Authorization: `Bearer ${session.token}`,
     },
@@ -31,7 +30,7 @@ export async function fetchTransaction(id: string): Promise<unknown> {
   if (!session) {
     throw new Error("Not authenticated");
   }
-  const { data } = await axios.get(`${getApiBaseUrl()}/move/${encodeURIComponent(id)}`, {
+  const { data } = await apiClient.get(`/move/${encodeURIComponent(id)}`, {
     headers: {
       Authorization: `Bearer ${session.token}`,
     },
@@ -56,7 +55,7 @@ export async function createTransaction(
   if (!session) {
     throw new Error("Not authenticated");
   }
-  const { data } = await axios.post(`${getApiBaseUrl()}/move`, body, {
+  const { data } = await apiClient.post(`/move`, body, {
     headers: {
       Authorization: `Bearer ${session.token}`,
       "Content-Type": "application/json",
@@ -74,8 +73,8 @@ export async function updateTransaction(
   if (!session) {
     throw new Error("Not authenticated");
   }
-  const { data } = await axios.put(
-    `${getApiBaseUrl()}/move/${encodeURIComponent(id)}`,
+  const { data } = await apiClient.put(
+    `/move/${encodeURIComponent(id)}`,
     body,
     {
       headers: {
@@ -93,8 +92,8 @@ export async function deleteTransaction(id: string): Promise<unknown> {
   if (!session) {
     throw new Error("Not authenticated");
   }
-  const { data } = await axios.delete(
-    `${getApiBaseUrl()}/move/${encodeURIComponent(id)}`,
+  const { data } = await apiClient.delete(
+    `/move/${encodeURIComponent(id)}`,
     {
       headers: {
         Authorization: `Bearer ${session.token}`,
