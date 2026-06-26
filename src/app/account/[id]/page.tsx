@@ -465,28 +465,41 @@ export default function AccountDetailPage() {
 
   if (loading && !account) {
     return (
-      <div className="flex min-h-full flex-1 flex-col gap-6 bg-slate-50 px-6 py-8 dark:bg-slate-950">
-        <p className="text-sm text-slate-500 dark:text-slate-400">Loading account…</p>
+      <div className="flex min-h-full flex-1 flex-col gap-6 bg-gradient-to-br from-slate-50/50 via-white to-slate-50/30 px-6 py-8 dark:from-slate-950 dark:via-slate-900/50 dark:to-slate-950">
+        <div className="animate-pulse space-y-6">
+          <div className="h-24 rounded-2xl bg-gradient-to-r from-slate-200 to-slate-100 dark:from-slate-800 dark:to-slate-700 animate-shimmer" />
+          <div className="h-96 rounded-2xl bg-gradient-to-r from-slate-200 to-slate-100 dark:from-slate-800 dark:to-slate-700 animate-shimmer" />
+        </div>
       </div>
     );
   }
 
   if (error || !account) {
     return (
-      <div className="flex min-h-full flex-1 flex-col gap-6 bg-slate-50 px-6 py-8 dark:bg-slate-950">
+      <div className="flex min-h-full flex-1 flex-col gap-6 bg-gradient-to-br from-slate-50/50 via-white to-slate-50/30 px-6 py-8 dark:from-slate-950 dark:via-slate-900/50 dark:to-slate-950">
         {error ? (
-          <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900 dark:border-red-900 dark:bg-red-950/40 dark:text-red-200">
-            {error}
-          </p>
+          <div className="animate-slide-up rounded-2xl border border-red-200/50 bg-gradient-to-r from-red-50/80 to-red-50/40 dark:from-red-950/30 dark:to-red-950/10 dark:border-red-900/50 backdrop-blur-sm px-6 py-4 text-sm text-red-900 dark:text-red-200">
+            <div className="flex items-start gap-3">
+              <span className="text-xl">⚠️</span>
+              <div>
+                <p className="font-semibold">Error loading account</p>
+                <p className="mt-1 opacity-90">{error}</p>
+              </div>
+            </div>
+          </div>
         ) : (
-          <p className="text-sm text-slate-600 dark:text-slate-400">Account not found.</p>
+          <div className="animate-fade-in rounded-2xl border border-slate-200/50 bg-gradient-to-br from-slate-50/80 to-slate-100/40 dark:from-slate-800/30 dark:to-slate-900/20 dark:border-slate-700/50 backdrop-blur-sm p-8 text-center">
+            <p className="text-3xl mb-3">🔍</p>
+            <p className="text-lg font-semibold text-slate-700 dark:text-slate-300">Account not found</p>
+            <p className="mt-2 text-slate-600 dark:text-slate-400">The account you're looking for doesn't exist or has been deleted</p>
+          </div>
         )}
         <button
           type="button"
           onClick={() => router.back()}
-          className="w-fit rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-900 transition hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800"
+          className="w-fit rounded-xl border border-slate-300/50 dark:border-slate-700/50 bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm px-6 py-3 text-sm font-semibold text-slate-700 dark:text-slate-300 transition-all duration-300 hover:bg-white hover:shadow-md dark:hover:bg-slate-800"
         >
-          Go Back
+          ← Go Back
         </button>
       </div>
     );
@@ -503,37 +516,41 @@ export default function AccountDetailPage() {
     : [];
 
   return (
-    <div className="flex min-h-full flex-1 flex-col gap-6 bg-slate-50 px-6 py-8 dark:bg-slate-950">
-      <div className="flex items-center justify-between gap-4">
+    <div className="flex min-h-full flex-1 flex-col gap-6 bg-gradient-to-br from-slate-50/50 via-white to-slate-50/30 px-6 py-8 dark:from-slate-950 dark:via-slate-900/50 dark:to-slate-950">
+      {/* Header */}
+      <div className="animate-slide-up flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
         <div className="flex items-center gap-4">
           <button
             type="button"
             onClick={() => router.back()}
-            className="text-slate-600 transition hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
+            className="inline-flex h-12 w-12 items-center justify-center rounded-xl border border-slate-200/50 dark:border-slate-700/50 bg-white/60 dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 transition-all duration-300 hover:bg-white dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100"
             aria-label="Go back"
           >
             <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
             </svg>
           </button>
-          <h1 className="text-3xl font-semibold tracking-tight text-slate-900 dark:text-slate-50">
-            {accountName}
-          </h1>
+          <div>
+            <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Account</p>
+            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
+              {accountName}
+            </h1>
+          </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-3">
           <button
             type="button"
             onClick={() => setEditOpen(true)}
-            className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-900 transition hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800"
+            className="rounded-xl border border-slate-300/50 dark:border-slate-700/50 bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm px-6 py-3 text-sm font-semibold text-slate-700 dark:text-slate-300 transition-all duration-300 hover:bg-white hover:shadow-md dark:hover:bg-slate-800"
           >
-            Edit
+            ✏️ Edit
           </button>
           <button
             type="button"
             onClick={() => setDeleteAccount(true)}
-            className="rounded-lg border border-red-300 bg-red-50 px-4 py-2 text-sm font-medium text-red-700 transition hover:bg-red-100 dark:border-red-600 dark:bg-red-950/30 dark:text-red-400 dark:hover:bg-red-950/50"
+            className="rounded-xl border border-red-300/50 dark:border-red-900/50 bg-red-50/60 dark:bg-red-950/30 backdrop-blur-sm px-6 py-3 text-sm font-semibold text-red-700 dark:text-red-400 transition-all duration-300 hover:bg-red-100 dark:hover:bg-red-950/50 hover:shadow-md"
           >
-            Delete
+            🗑️ Delete
           </button>
         </div>
       </div>
@@ -599,54 +616,56 @@ export default function AccountDetailPage() {
         }}
       />
 
-      <div className="rounded-lg border border-slate-200 bg-white p-8 dark:border-slate-800 dark:bg-slate-900">
-        <div className="grid gap-6 sm:grid-cols-2">
-          <div>
-            <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Account ID</p>
-            <p className="mt-1 text-lg text-slate-900 dark:text-slate-100 font-mono text-xs break-all">
+      {/* Account Info Card */}
+      <div className="animate-fade-in rounded-2xl border border-slate-200/40 dark:border-slate-700/40 bg-white/80 dark:bg-slate-900/60 backdrop-blur-sm p-8 elevation-2">
+        <h2 className="text-xl font-bold text-slate-900 dark:text-slate-50 mb-6">Account Details</h2>
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="space-y-2">
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400">Account ID</p>
+            <p className="text-sm text-slate-900 dark:text-slate-100 font-mono break-all bg-slate-100/50 dark:bg-slate-800/50 rounded-lg p-2">
               {account.id}
             </p>
           </div>
 
-          <div>
-            <p className="text-sm font-medium text-slate-600 dark:text-slate-400">User ID</p>
-            <p className="mt-1 text-lg text-slate-900 dark:text-slate-100 font-mono text-xs break-all">
+          <div className="space-y-2">
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400">User ID</p>
+            <p className="text-sm text-slate-900 dark:text-slate-100 font-mono break-all bg-slate-100/50 dark:bg-slate-800/50 rounded-lg p-2">
               {account.user_id}
             </p>
           </div>
 
-          <div>
-            <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Move Type</p>
+          <div className="space-y-2">
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400">Move Type</p>
             <div className="mt-2">
               <MoveTypeIcon value={moveType} />
             </div>
           </div>
 
-          <div>
-            <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Account Type</p>
+          <div className="space-y-2">
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400">Account Type</p>
             <div className="mt-2">
               <AccountTypeIcon value={accType} />
             </div>
           </div>
 
-          <div>
-            <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Created At</p>
-            <p className="mt-1 text-sm text-slate-900 dark:text-slate-100">
+          <div className="space-y-2">
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400">Created</p>
+            <p className="text-sm text-slate-900 dark:text-slate-100">
               {formatDate(account.created_at)}
             </p>
           </div>
 
-          <div>
-            <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Updated At</p>
-            <p className="mt-1 text-sm text-slate-900 dark:text-slate-100">
+          <div className="space-y-2">
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400">Updated</p>
+            <p className="text-sm text-slate-900 dark:text-slate-100">
               {formatDate(account.updated_at)}
             </p>
           </div>
 
           {account.super_account_id && (
-            <div>
-              <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Super Account ID</p>
-              <p className="mt-1 text-sm text-slate-900 dark:text-slate-100 font-mono text-xs break-all">
+            <div className="space-y-2">
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400">Super Account ID</p>
+              <p className="text-sm text-slate-900 dark:text-slate-100 font-mono break-all bg-slate-100/50 dark:bg-slate-800/50 rounded-lg p-2">
                 {account.super_account_id}
               </p>
             </div>
@@ -655,12 +674,12 @@ export default function AccountDetailPage() {
       </div>
 
       {subAccounts.length > 0 && (
-        <div>
-          <h2 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-slate-50 mb-4">
-            Sub-Accounts
+        <div className="animate-fade-in">
+          <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-50 mb-4">
+            📊 Sub-Accounts
           </h2>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {subAccounts.map((subAccount) => {
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 stagger-items">
+            {subAccounts.map((subAccount, idx) => {
               const subName =
                 getString(subAccount, "account_name") ||
                 getString(subAccount, "name") ||
@@ -671,15 +690,19 @@ export default function AccountDetailPage() {
               return (
                 <div
                   key={subAccount.id}
-                  className="flex items-center gap-3 rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900"
+                  className="group flex items-center gap-3 rounded-xl border border-slate-200/40 dark:border-slate-700/40 bg-white/80 dark:bg-slate-900/60 backdrop-blur-sm p-4 transition-all duration-300 hover-lift elevation-1"
+                  style={{ animationDelay: `${idx * 50}ms` }}
                 >
-                  <div className="flex gap-2">
+                  <div className="flex shrink-0 gap-2">
                     <MoveTypeIcon value={subMoveType} />
                     <AccountTypeIcon value={subAccType} />
                   </div>
-                  <p className="min-w-0 flex-1 text-sm font-medium text-slate-900 dark:text-slate-100 truncate">
+                  <p className="min-w-0 flex-1 text-sm font-semibold text-slate-900 dark:text-slate-100 truncate group-hover:text-primary transition-colors">
                     {subName}
                   </p>
+                  <svg className="h-5 w-5 shrink-0 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                  </svg>
                 </div>
               );
             })}
@@ -688,22 +711,26 @@ export default function AccountDetailPage() {
       )}
 
       {subAccounts.length === 0 && (
-        <p className="text-sm text-slate-600 dark:text-slate-400">No sub-accounts.</p>
+        <div className="animate-fade-in rounded-2xl border border-slate-200/50 bg-gradient-to-br from-slate-50/80 to-slate-100/40 dark:from-slate-800/30 dark:to-slate-900/20 dark:border-slate-700/50 backdrop-blur-sm p-8 text-center">
+          <p className="text-slate-600 dark:text-slate-400">No sub-accounts yet</p>
+        </div>
       )}
 
       {moveType?.toLowerCase() === "movement" ? (
-        <div className="rounded-lg border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900">
-          <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Current Balance</p>
+        <div className="animate-fade-in rounded-2xl border border-slate-200/40 dark:border-slate-700/40 bg-white/80 dark:bg-slate-900/60 backdrop-blur-sm p-8 elevation-2">
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-3">💰 Current Balance</p>
           {soldeError ? (
-            <p className="mt-2 text-sm text-red-600 dark:text-red-400">{soldeError}</p>
+            <div className="mt-2 rounded-lg border border-red-200/50 bg-red-50/50 dark:bg-red-950/30 p-3 text-sm text-red-600 dark:text-red-400">
+              {soldeError}
+            </div>
           ) : soldeLoading ? (
-            <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Loading balance…</p>
+            <div className="mt-2 h-12 rounded-lg bg-gradient-to-r from-slate-200 to-slate-100 dark:from-slate-800 dark:to-slate-700 animate-shimmer" />
           ) : solde !== null ? (
             <p
-              className={`mt-2 text-3xl font-semibold ${
+              className={`mt-2 text-4xl sm:text-5xl font-black font-mono ${
                 solde >= 0
                   ? "text-emerald-600 dark:text-emerald-400"
-                  : "text-red-600 dark:text-red-400"
+                  : "text-rose-600 dark:text-rose-400"
               }`}
             >
               {formatCurrency(solde)}
@@ -711,50 +738,33 @@ export default function AccountDetailPage() {
           ) : null}
         </div>
       ) : (
-        <div className="rounded-lg border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900">
-          <div className="mb-6">
-            <p className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-4">Balance Tendency</p>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => setTendencyView("monthly")}
-                className={`px-3 py-2 text-sm font-medium rounded-lg transition ${
-                  tendencyView === "monthly"
-                    ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
-                    : "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
-                }`}
-              >
-                Monthly
-              </button>
-              <button
-                type="button"
-                onClick={() => setTendencyView("weekly")}
-                className={`px-3 py-2 text-sm font-medium rounded-lg transition ${
-                  tendencyView === "weekly"
-                    ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
-                    : "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
-                }`}
-              >
-                Weekly
-              </button>
-              <button
-                type="button"
-                onClick={() => setTendencyView("daily")}
-                className={`px-3 py-2 text-sm font-medium rounded-lg transition ${
-                  tendencyView === "daily"
-                    ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
-                    : "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
-                }`}
-              >
-                Daily
-              </button>
+        <div className="animate-fade-in rounded-2xl border border-slate-200/40 dark:border-slate-700/40 bg-white/80 dark:bg-slate-900/60 backdrop-blur-sm p-8 elevation-2">
+          <div className="mb-8">
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-4">📈 Balance Tendency</p>
+            <div className="flex gap-2 flex-wrap">
+              {(['monthly', 'weekly', 'daily'] as const).map((view) => (
+                <button
+                  key={view}
+                  type="button"
+                  onClick={() => setTendencyView(view)}
+                  className={`px-4 py-2 text-sm font-semibold rounded-lg transition-all duration-300 capitalize ${
+                    tendencyView === view
+                      ? "bg-gradient-to-r from-teal-500 to-teal-600 text-white shadow-md dark:from-teal-600 dark:to-teal-700"
+                      : "bg-slate-100/50 text-slate-700 dark:bg-slate-800/50 dark:text-slate-300 hover:bg-slate-200/50 dark:hover:bg-slate-700/50"
+                  }`}
+                >
+                  {view}
+                </button>
+              ))}
             </div>
           </div>
 
           {tendencyError ? (
-            <p className="text-sm text-red-600 dark:text-red-400">{tendencyError}</p>
+            <div className="rounded-lg border border-red-200/50 bg-red-50/50 dark:bg-red-950/30 p-4 text-sm text-red-600 dark:text-red-400">
+              {tendencyError}
+            </div>
           ) : tendencyLoading ? (
-            <p className="text-sm text-slate-500 dark:text-slate-400">Loading balance tendency…</p>
+            <div className="h-80 rounded-lg bg-gradient-to-r from-slate-200 to-slate-100 dark:from-slate-800 dark:to-slate-700 animate-shimmer" />
           ) : tendencyView === "monthly" && monthlyData && monthlyData.length > 0 ? (
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={monthlyData} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
@@ -861,56 +871,76 @@ export default function AccountDetailPage() {
               </LineChart>
             </ResponsiveContainer>
           ) : (
-            <p className="text-sm text-slate-600 dark:text-slate-400">No balance data available.</p>
+            <div className="rounded-lg border border-slate-200/50 bg-slate-50/50 dark:bg-slate-800/30 dark:border-slate-700/50 p-6 text-center text-slate-600 dark:text-slate-400">
+              No balance data available
+            </div>
           )}
         </div>
       )}
 
-      <div>
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-slate-50">
-            Move History
+      {/* Move History */}
+      <div className="animate-fade-in">
+        <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
+            📝 Transaction History
           </h2>
           <button
             type="button"
             onClick={() => setAddMoveOpen(true)}
-            className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200"
+            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 px-6 py-3 text-sm font-semibold text-white transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 dark:from-teal-600 dark:to-teal-700 dark:hover:from-teal-700 dark:hover:to-teal-800 elevation-2"
           >
+            <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
             Add Move
           </button>
         </div>
 
         {moveHistoryError ? (
-          <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900 dark:border-red-900 dark:bg-red-950/40 dark:text-red-200">
-            {moveHistoryError}
-          </p>
+          <div className="rounded-2xl border border-red-200/50 bg-gradient-to-r from-red-50/80 to-red-50/40 dark:from-red-950/30 dark:to-red-950/10 dark:border-red-900/50 backdrop-blur-sm px-6 py-4 text-sm text-red-900 dark:text-red-200">
+            <div className="flex items-start gap-3">
+              <span className="text-xl">⚠️</span>
+              <div>
+                <p className="font-semibold">Error loading transaction history</p>
+                <p className="mt-1 opacity-90">{moveHistoryError}</p>
+              </div>
+            </div>
+          </div>
         ) : null}
 
         {moveHistoryLoading && moveHistory === null ? (
-          <p className="text-sm text-slate-500 dark:text-slate-400">
-            Loading move history…
-          </p>
+          <div className="animate-pulse space-y-4">
+            <div className="h-16 rounded-2xl bg-gradient-to-r from-slate-200 to-slate-100 dark:from-slate-800 dark:to-slate-700 animate-shimmer" />
+            <div className="h-16 rounded-2xl bg-gradient-to-r from-slate-200 to-slate-100 dark:from-slate-800 dark:to-slate-700 animate-shimmer" />
+            <div className="h-16 rounded-2xl bg-gradient-to-r from-slate-200 to-slate-100 dark:from-slate-800 dark:to-slate-700 animate-shimmer" />
+          </div>
         ) : null}
 
         {!moveHistoryLoading && moveHistory && moveHistory.length === 0 ? (
-          <p className="text-sm text-slate-600 dark:text-slate-400">
-            No moves found.
-          </p>
+          <div className="rounded-2xl border border-slate-200/50 bg-gradient-to-br from-slate-50/80 to-slate-100/40 dark:from-slate-800/30 dark:to-slate-900/20 dark:border-slate-700/50 backdrop-blur-sm p-8 text-center">
+            <p className="text-3xl mb-3">📭</p>
+            <p className="text-lg font-semibold text-slate-700 dark:text-slate-300">No transactions yet</p>
+            <p className="mt-2 text-slate-600 dark:text-slate-400">Start tracking by adding your first transaction</p>
+          </div>
         ) : null}
 
-        <AccountMoveHistoryTable
-          moves={moveHistory}
-          currentAccountId={accountId}
-          currentPage={moveHistoryPage}
-          pageSize={moveHistoryPageSize}
-          total={moveHistoryTotal}
-          loading={moveHistoryLoading}
-          onPageChange={(page) => void loadMoveHistory(page, moveHistoryPageSize)}
-          onPageSizeChange={(limit) => void loadMoveHistory(1, limit)}
-          onViewMove={setViewMoveId}
-          onEditMove={setEditMove}
-          onDeleteMove={setDeleteMove}
-        />
+        {moveHistory && moveHistory.length > 0 && (
+          <div className="rounded-2xl border border-slate-200/40 dark:border-slate-700/40 bg-white/80 dark:bg-slate-900/60 backdrop-blur-sm overflow-hidden elevation-2 hover-lift transition-all duration-300">
+            <AccountMoveHistoryTable
+              moves={moveHistory}
+              currentAccountId={accountId}
+              currentPage={moveHistoryPage}
+              pageSize={moveHistoryPageSize}
+              total={moveHistoryTotal}
+              loading={moveHistoryLoading}
+              onPageChange={(page) => void loadMoveHistory(page, moveHistoryPageSize)}
+              onPageSizeChange={(limit) => void loadMoveHistory(1, limit)}
+              onViewMove={setViewMoveId}
+              onEditMove={setEditMove}
+              onDeleteMove={setDeleteMove}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

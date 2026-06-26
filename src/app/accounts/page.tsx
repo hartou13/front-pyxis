@@ -113,28 +113,28 @@ function getMoveTypePalette(
   if (v === "income") {
     return {
       palette:
-        "bg-emerald-100 text-emerald-800 ring-emerald-200/90 dark:bg-emerald-950/55 dark:text-emerald-300 dark:ring-emerald-700/50",
+        "bg-emerald-100/60 text-emerald-900 ring-1 ring-emerald-300/50 dark:bg-emerald-950/40 dark:text-emerald-300 dark:ring-emerald-800/60",
       label: "Income",
       Icon: IconIncome,
     };
   } else if (v === "expense") {
     return {
       palette:
-        "bg-rose-100 text-rose-800 ring-rose-200/90 dark:bg-rose-950/50 dark:text-rose-300 dark:ring-rose-800/50",
+        "bg-rose-100/60 text-rose-900 ring-1 ring-rose-300/50 dark:bg-rose-950/40 dark:text-rose-300 dark:ring-rose-800/60",
       label: "Expense",
       Icon: IconExpense,
     };
   } else if (v === "movement") {
     return {
       palette:
-        "bg-sky-100 text-sky-800 ring-sky-200/90 dark:bg-sky-950/50 dark:text-sky-300 dark:ring-sky-700/50",
+        "bg-sky-100/60 text-sky-900 ring-1 ring-sky-300/50 dark:bg-sky-950/40 dark:text-sky-300 dark:ring-sky-800/60",
       label: "Movement",
       Icon: IconMovement,
     };
   }
   return {
     palette:
-      "bg-slate-100 text-slate-700 ring-slate-200/80 dark:bg-slate-800 dark:text-slate-200 dark:ring-slate-600/50",
+      "bg-slate-100/60 text-slate-700 ring-1 ring-slate-300/50 dark:bg-slate-800/40 dark:text-slate-300 dark:ring-slate-700/60",
     label: value ?? "Unknown",
     Icon: null,
   };
@@ -147,21 +147,21 @@ function getAccountTypePalette(
   if (v === "external") {
     return {
       palette:
-        "bg-amber-100 text-amber-900 ring-amber-200/90 dark:bg-amber-950/45 dark:text-amber-300 dark:ring-amber-800/45",
+        "bg-amber-100/60 text-amber-900 ring-1 ring-amber-300/50 dark:bg-amber-950/40 dark:text-amber-300 dark:ring-amber-800/60",
       label: "External",
       Icon: IconExternal,
     };
   } else if (v === "personal") {
     return {
       palette:
-        "bg-violet-100 text-violet-800 ring-violet-200/90 dark:bg-violet-950/50 dark:text-violet-300 dark:ring-violet-700/50",
+        "bg-indigo-100/60 text-indigo-900 ring-1 ring-indigo-300/50 dark:bg-indigo-950/40 dark:text-indigo-300 dark:ring-indigo-800/60",
       label: "Personal",
       Icon: IconPersonal,
     };
   }
   return {
     palette:
-      "bg-slate-100 text-slate-700 ring-slate-200/80 dark:bg-slate-800 dark:text-slate-200 dark:ring-slate-600/50",
+      "bg-slate-100/60 text-slate-700 ring-1 ring-slate-300/50 dark:bg-slate-800/40 dark:text-slate-300 dark:ring-slate-700/60",
     label: "Unknown",
     Icon: IconPersonal,
   };
@@ -170,8 +170,8 @@ function getAccountTypePalette(
 function MoveTypeChip({ value }: { value: string | undefined }) {
   const { palette, label, Icon } = getMoveTypePalette(value);
   return (
-    <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset ${palette}`}>
-      {Icon && <Icon className="h-3.5 w-3.5" />}
+    <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold ring-1 ring-inset transition-all duration-300 ease-out hover:shadow-md ${palette}`}>
+      {Icon && <Icon className="h-4 w-4" />}
       {label}
     </span>
   );
@@ -180,8 +180,8 @@ function MoveTypeChip({ value }: { value: string | undefined }) {
 function AccountTypeChip({ value }: { value: string | undefined }) {
   const { palette, label, Icon } = getAccountTypePalette(value);
   return (
-    <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset ${palette}`}>
-      {Icon && <Icon className="h-3.5 w-3.5" />}
+    <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold ring-1 ring-inset transition-all duration-300 ease-out hover:shadow-md ${palette}`}>
+      {Icon && <Icon className="h-4 w-4" />}
       {label}
     </span>
   );
@@ -215,42 +215,54 @@ function AccountCard({
 
   return (
     <article
-      className={`flex flex-col rounded-xl border border-l-4 border-slate-200 bg-white py-5 pl-4 pr-5 shadow-sm dark:border-slate-800 dark:bg-slate-900 ${moveTypeBorderClass(moveType)}`}
+      className="group relative flex flex-col rounded-2xl border border-slate-200/40 bg-white/80 backdrop-blur-sm px-6 py-5 elevation-2 transition-all duration-300 ease-out hover-lift dark:border-slate-700/40 dark:bg-slate-900/60 animate-slide-up overflow-hidden"
+      style={{ animationDuration: '0.4s' }}
     >
+      {/* Gradient accent bar - top */}
+      <div className={`absolute top-0 left-0 h-1.5 rounded-tl-2xl rounded-tr-2xl w-full bg-gradient-to-r ${
+        moveType?.toLowerCase() === "income"
+          ? "from-emerald-400 to-teal-500"
+          : moveType?.toLowerCase() === "expense"
+          ? "from-rose-400 to-pink-500"
+          : "from-sky-400 to-cyan-500"
+      }`} />
+
       <div className="flex items-start justify-between gap-3">
-        <h2 className="min-w-0 flex-1 text-lg font-semibold tracking-tight text-slate-900 dark:text-slate-50">
-          {name}
-        </h2>
-        <div className="flex shrink-0 gap-1">
+        <div className="min-w-0 flex-1">
+          <h2 className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-50 group-hover:text-primary transition-colors">
+            {name}
+          </h2>
+        </div>
+        <div className="flex shrink-0 gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
           <button
             type="button"
             onClick={() => rowId && onView(rowId)}
             disabled={!rowId}
-            className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-40 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-slate-600 hover:bg-primary/10 hover:text-primary transition-all duration-300 ease-out disabled:cursor-not-allowed disabled:opacity-40 dark:text-slate-400 dark:hover:bg-primary/20 dark:hover:text-primary"
             aria-label="View details"
             title={rowId ? "View details" : "Missing account id"}
           >
-            <IconEye className="h-4 w-4" />
+            <IconEye className="h-5 w-5" />
           </button>
           <button
             type="button"
             onClick={() => onEdit(account)}
             disabled={!rowId}
-            className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-40 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-slate-600 hover:bg-amber-50 hover:text-amber-600 transition-all duration-300 ease-out disabled:cursor-not-allowed disabled:opacity-40 dark:text-slate-400 dark:hover:bg-amber-950/30 dark:hover:text-amber-400"
             aria-label="Edit account"
             title={rowId ? "Edit account" : "Missing account id"}
           >
-            <IconPencil className="h-4 w-4" />
+            <IconPencil className="h-5 w-5" />
           </button>
           <button
             type="button"
             onClick={() => onDelete(account)}
             disabled={!rowId}
-            className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-slate-600 transition hover:bg-rose-50 hover:text-rose-700 disabled:cursor-not-allowed disabled:opacity-40 dark:text-slate-400 dark:hover:bg-rose-950/40 dark:hover:text-rose-400"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-slate-600 hover:bg-rose-50 hover:text-rose-600 transition-all duration-300 ease-out disabled:cursor-not-allowed disabled:opacity-40 dark:text-slate-400 dark:hover:bg-rose-950/30 dark:hover:text-rose-400"
             aria-label="Delete account"
             title={rowId ? "Delete account" : "Missing account id"}
           >
-            <IconTrash className="h-4 w-4" />
+            <IconTrash className="h-5 w-5" />
           </button>
         </div>
       </div>
@@ -366,66 +378,67 @@ function AccountsContent() {
   );
 
   return (
-    <div className="flex min-h-full flex-1 flex-col gap-6 bg-slate-50 px-6 py-8 dark:bg-slate-950">
-      <div className="flex flex-wrap items-end justify-between gap-4">
+    <div className="flex min-h-full flex-1 flex-col gap-8 bg-gradient-to-br from-slate-50/50 via-white to-slate-50/30 px-6 py-8 dark:from-slate-950 dark:via-slate-900/50 dark:to-slate-950">
+      <div className="flex flex-wrap items-end justify-between gap-6 animate-fade-in">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-50">
+          <h1 className="text-4xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
             Accounts
           </h1>
-          <p className="mt-1 text-slate-600 dark:text-slate-400">
-            Accounts from your Pyxis workspace.
+          <p className="mt-2 text-base text-slate-600 dark:text-slate-400">
+            Manage all your accounts in one place
           </p>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-3">
           <button
             type="button"
             onClick={() => setAddOpen(true)}
-            className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200"
+            className="rounded-lg bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 px-6 py-2.5 text-sm font-semibold text-white transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-0.5 dark:from-teal-600 dark:to-teal-700 dark:hover:from-teal-700 dark:hover:to-teal-800"
           >
-            Add
+            + Add Account
           </button>
           <button
             type="button"
             onClick={() => void load()}
             disabled={loading}
-            className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-900 transition hover:bg-slate-50 disabled:opacity-50 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800"
+            className="rounded-lg border border-slate-300 bg-white/80 backdrop-blur-sm px-6 py-2.5 text-sm font-semibold text-slate-900 transition-all duration-300 ease-out hover:bg-slate-50 hover:shadow-md disabled:opacity-50 dark:border-slate-600 dark:bg-slate-900/80 dark:text-slate-100 dark:hover:bg-slate-800"
           >
-            {loading ? "Refreshing…" : "Refresh"}
+            {loading ? "⟳ Refreshing…" : "↻ Refresh"}
           </button>
         </div>
       </div>
 
-      <section aria-label="Filter accounts" className="flex flex-col gap-3">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="w-24 shrink-0 text-xs font-medium text-slate-500 dark:text-slate-400">
-            Move type
+      <section aria-label="Filter accounts" className="flex flex-col gap-4 animate-slide-up" style={{ animationDelay: '0.1s' }}>
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+          <span className="text-sm font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">
+            Transaction Type
           </span>
-          <div className="flex flex-wrap gap-1.5" role="group" aria-label="Filter by move type">
+          <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by move type">
             {[
               { value: null, label: "All" },
-              { value: "income", label: "Income", Icon: IconIncome },
-              { value: "expense", label: "Expense", Icon: IconExpense },
-              { value: "movement", label: "Movement", Icon: IconMovement },
-            ].map((pill) => {
+              { value: "income", label: "Income", Icon: IconIncome, color: "emerald" },
+              { value: "expense", label: "Expense", Icon: IconExpense, color: "rose" },
+              { value: "movement", label: "Movement", Icon: IconMovement, color: "sky" },
+            ].map((pill, idx) => {
               const isActive = moveTypeFilter === pill.value;
-              const inactivePalette = "bg-white text-slate-600 ring-1 ring-inset ring-slate-200 hover:bg-slate-50 dark:bg-slate-900 dark:text-slate-300 dark:ring-slate-700 dark:hover:bg-slate-800";
+              const inactivePalette = "bg-white/60 text-slate-600 ring-1 ring-slate-200/60 hover:bg-slate-50 dark:bg-slate-900/60 dark:text-slate-300 dark:ring-slate-700/60 dark:hover:bg-slate-800";
               const activePalette = pill.value === null
-                ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
-                : pill.value === "income"
-                  ? "bg-emerald-100 text-emerald-800 ring-emerald-200/90 dark:bg-emerald-950/55 dark:text-emerald-300 dark:ring-emerald-700/50"
-                  : pill.value === "expense"
-                    ? "bg-rose-100 text-rose-800 ring-rose-200/90 dark:bg-rose-950/50 dark:text-rose-300 dark:ring-rose-800/50"
-                    : "bg-sky-100 text-sky-800 ring-sky-200/90 dark:bg-sky-950/50 dark:text-sky-300 dark:ring-sky-700/50";
+                ? "bg-gradient-to-r from-slate-900 to-slate-800 text-white ring-slate-900 shadow-lg dark:from-slate-100 dark:to-slate-200 dark:text-slate-900 dark:ring-slate-100"
+                : pill.color === "income"
+                  ? "bg-gradient-to-r from-emerald-100 to-teal-100 text-emerald-900 ring-emerald-300/50 shadow-md dark:from-emerald-950/50 dark:to-teal-950/50 dark:text-emerald-300 dark:ring-emerald-700/60"
+                  : pill.color === "expense"
+                    ? "bg-gradient-to-r from-rose-100 to-pink-100 text-rose-900 ring-rose-300/50 shadow-md dark:from-rose-950/50 dark:to-pink-950/50 dark:text-rose-300 dark:ring-rose-700/60"
+                    : "bg-gradient-to-r from-sky-100 to-cyan-100 text-sky-900 ring-sky-300/50 shadow-md dark:from-sky-950/50 dark:to-cyan-950/50 dark:text-sky-300 dark:ring-sky-700/60";
 
               return (
                 <button
                   key={pill.value ?? "all"}
                   type="button"
                   onClick={() => setFilter("account_move_type", pill.value)}
-                  className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ring-1 ring-inset transition ${isActive ? activePalette : inactivePalette}`}
+                  className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold ring-1 ring-inset transition-all duration-300 ease-out hover:shadow-md ${isActive ? activePalette : inactivePalette}`}
                   aria-pressed={isActive}
+                  style={{ animationDelay: `${idx * 50}ms` }}
                 >
-                  {"Icon" in pill && pill.Icon && <pill.Icon className="h-3.5 w-3.5" />}
+                  {"Icon" in pill && pill.Icon && <pill.Icon className="h-4 w-4" />}
                   {pill.label}
                 </button>
               );
@@ -433,33 +446,34 @@ function AccountsContent() {
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="w-24 shrink-0 text-xs font-medium text-slate-500 dark:text-slate-400">
-            Account type
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+          <span className="text-sm font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">
+            Account Type
           </span>
-          <div className="flex flex-wrap gap-1.5" role="group" aria-label="Filter by account type">
+          <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by account type">
             {[
               { value: null, label: "All" },
-              { value: "external", label: "External", Icon: IconExternal },
-              { value: "personal", label: "Personal", Icon: IconPersonal },
-            ].map((pill) => {
+              { value: "external", label: "External", Icon: IconExternal, color: "amber" },
+              { value: "personal", label: "Personal", Icon: IconPersonal, color: "indigo" },
+            ].map((pill, idx) => {
               const isActive = accountTypeFilter === pill.value;
-              const inactivePalette = "bg-white text-slate-600 ring-1 ring-inset ring-slate-200 hover:bg-slate-50 dark:bg-slate-900 dark:text-slate-300 dark:ring-slate-700 dark:hover:bg-slate-800";
+              const inactivePalette = "bg-white/60 text-slate-600 ring-1 ring-slate-200/60 hover:bg-slate-50 dark:bg-slate-900/60 dark:text-slate-300 dark:ring-slate-700/60 dark:hover:bg-slate-800";
               const activePalette = pill.value === null
-                ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
-                : pill.value === "external"
-                  ? "bg-amber-100 text-amber-900 ring-amber-200/90 dark:bg-amber-950/45 dark:text-amber-300 dark:ring-amber-800/45"
-                  : "bg-violet-100 text-violet-800 ring-violet-200/90 dark:bg-violet-950/50 dark:text-violet-300 dark:ring-violet-700/50";
+                ? "bg-gradient-to-r from-slate-900 to-slate-800 text-white ring-slate-900 shadow-lg dark:from-slate-100 dark:to-slate-200 dark:text-slate-900 dark:ring-slate-100"
+                : pill.color === "amber"
+                  ? "bg-gradient-to-r from-amber-100 to-yellow-100 text-amber-900 ring-amber-300/50 shadow-md dark:from-amber-950/50 dark:to-yellow-950/50 dark:text-amber-300 dark:ring-amber-700/60"
+                  : "bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-900 ring-indigo-300/50 shadow-md dark:from-indigo-950/50 dark:to-purple-950/50 dark:text-indigo-300 dark:ring-indigo-700/60";
 
               return (
                 <button
                   key={pill.value ?? "all"}
                   type="button"
                   onClick={() => setFilter("account_type", pill.value)}
-                  className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ring-1 ring-inset transition ${isActive ? activePalette : inactivePalette}`}
+                  className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold ring-1 ring-inset transition-all duration-300 ease-out hover:shadow-md ${isActive ? activePalette : inactivePalette}`}
                   aria-pressed={isActive}
+                  style={{ animationDelay: `${idx * 50}ms` }}
                 >
-                  {"Icon" in pill && pill.Icon && <pill.Icon className="h-3.5 w-3.5" />}
+                  {"Icon" in pill && pill.Icon && <pill.Icon className="h-4 w-4" />}
                   {pill.label}
                 </button>
               );
@@ -484,28 +498,49 @@ function AccountsContent() {
       />
 
       {error ? (
-        <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900 dark:border-red-900 dark:bg-red-950/40 dark:text-red-200">
-          {error}
-        </p>
+        <div className="rounded-2xl border border-rose-300/50 bg-gradient-to-r from-rose-50 to-rose-50/50 px-6 py-4 text-base text-rose-900 dark:border-rose-900/50 dark:from-rose-950/30 dark:to-rose-950/20 dark:text-rose-200 elevation-1 animate-slide-up">
+          <div className="flex items-start gap-3">
+            <span className="text-xl">⚠</span>
+            <div>{error}</div>
+          </div>
+        </div>
       ) : null}
 
       {loading && accounts === null ? (
-        <p className="text-sm text-slate-500 dark:text-slate-400">Loading accounts…</p>
+        <div className="space-y-4 animate-fade-in">
+          <div className="h-32 rounded-2xl bg-gradient-to-br from-slate-200/50 to-slate-100/50 dark:from-slate-800/50 dark:to-slate-700/50 animate-shimmer"></div>
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="h-48 rounded-2xl bg-gradient-to-br from-slate-200/50 to-slate-100/50 dark:from-slate-800/50 dark:to-slate-700/50 animate-shimmer"></div>
+            ))}
+          </div>
+        </div>
       ) : null}
 
       {!loading && accounts && accounts.length === 0 ? (
-        <p className="text-sm text-slate-600 dark:text-slate-400">
-          No accounts {moveTypeFilter || accountTypeFilter ? "match the active filters." : "returned."}
-        </p>
+        <div className="rounded-2xl border-2 border-dashed border-slate-300 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/30 px-8 py-16 text-center animate-fade-in">
+          <div className="text-5xl mb-3">📭</div>
+          <p className="text-lg text-slate-600 dark:text-slate-400">
+            {moveTypeFilter || accountTypeFilter ? "No accounts match your filters" : "No accounts yet"}
+          </p>
+          {!moveTypeFilter && !accountTypeFilter && (
+            <button
+              onClick={() => setAddOpen(true)}
+              className="mt-4 inline-block rounded-lg bg-gradient-to-r from-teal-500 to-teal-600 px-6 py-2.5 text-sm font-semibold text-white transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-0.5"
+            >
+              Create Your First Account
+            </button>
+          )}
+        </div>
       ) : null}
 
       {accounts && accounts.length > 0 ? (
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          {accounts.map((account, index) => (
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 stagger-items">
+          {accounts.map((account) => (
             <AccountCard
               key={
                 (typeof account.id === "string" && account.id) ||
-                `account-${index}`
+                `account-${Math.random()}`
               }
               account={account}
               onView={(id) => router.push(`/account/${id}`)}
