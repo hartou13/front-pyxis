@@ -106,6 +106,8 @@ export default function WelcomePage() {
   const [accounts, setAccounts] = useState<AccountBalance[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [refreshError, setRefreshError] = useState<string | null>(null);
 
   // Evolution filters and data
   const [startDate, setStartDate] = useState(() => {
@@ -205,6 +207,41 @@ export default function WelcomePage() {
     }
   }, [startDate]);
 
+  const refreshSolde = useCallback(async () => {
+    setRefreshing(true);
+    setRefreshError(null);
+    try {
+      const session = getSession();
+      if (!session) {
+        throw new Error("Not authenticated");
+      }
+      await axios.post(`${getApiBaseUrl()}/solde/refresh`, {}, {
+        headers: {
+          Authorization: `Bearer ${session.token}`,
+        },
+      });
+      await loadBalances();
+      await loadEvolution();
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        const msg =
+          err.response?.data &&
+            typeof err.response.data === "object" &&
+            "message" in err.response.data &&
+            typeof (err.response.data as { message: unknown }).message === "string"
+            ? (err.response.data as { message: string }).message
+            : err.response?.statusText || err.message;
+        setRefreshError(typeof msg === "string" ? msg : "Failed to refresh balance.");
+      } else if (err instanceof Error) {
+        setRefreshError(err.message);
+      } else {
+        setRefreshError("Failed to refresh balance.");
+      }
+    } finally {
+      setRefreshing(false);
+    }
+  }, [loadBalances, loadEvolution]);
+
   useEffect(() => {
     void loadBalances();
   }, [loadBalances]);
@@ -216,11 +253,32 @@ export default function WelcomePage() {
   return (
     <div className="flex min-h-full flex-1 flex-col gap-6 bg-zinc-50 px-6 py-8 dark:bg-zinc-950">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
+        <div className="flex items-center gap-3">
           <h1 className="text-3xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
             Welcome
           </h1>
-
+          <button
+            type="button"
+            onClick={() => void refreshSolde()}
+            disabled={refreshing}
+            className="inline-flex items-center gap-2 rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm font-medium text-zinc-900 hover:bg-zinc-50 disabled:opacity-50 disabled:cursor-not-allowed dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800"
+            title="Refresh balance from server"
+          >
+            {refreshing ? (
+              <>
+                <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-zinc-300 border-t-zinc-900 dark:border-zinc-600 dark:border-t-zinc-100" />
+                Refreshing…
+              </>
+            ) : (
+              <>
+                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden>
+                  <polyline points="23 4 23 10 17 10" />
+                  <path d="M20.49 15a9 9 0 1 1-2-8.83" />
+                </svg>
+                Refresh
+              </>
+            )}
+          </button>
         </div>
 
         {/* Start Date Filter */}
@@ -240,6 +298,12 @@ export default function WelcomePage() {
       {error ? (
         <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900 dark:border-red-900 dark:bg-red-950/40 dark:text-red-200">
           {error}
+        </p>
+      ) : null}
+
+      {refreshError ? (
+        <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900 dark:border-red-900 dark:bg-red-950/40 dark:text-red-200">
+          {refreshError}
         </p>
       ) : null}
 
