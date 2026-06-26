@@ -80,7 +80,23 @@ export function AppSidebar() {
         collapsed ? "w-[4.25rem]" : "w-56"
       }`}
     >
-      <div className="flex h-14 items-center justify-end border-b border-slate-200 px-2 dark:border-slate-800">
+      <div className="flex h-16 items-center justify-between border-b border-slate-200 px-3 dark:border-slate-800">
+        <Link
+          href="/welcome"
+          className="flex items-center gap-2 font-bold text-lg bg-gradient-to-r from-teal-600 to-cyan-600 dark:from-teal-500 dark:to-cyan-500 bg-clip-text text-transparent transition-opacity hover:opacity-80"
+          title="Pyxis"
+        >
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-teal-500 to-cyan-500 dark:from-teal-600 dark:to-cyan-600 text-white font-bold text-sm shrink-0">
+            P
+          </div>
+          <span
+            className={`truncate transition-opacity duration-200 ${
+              collapsed ? "sr-only" : "opacity-100"
+            }`}
+          >
+            Pyxis
+          </span>
+        </Link>
         <button
           type="button"
           onClick={toggle}
