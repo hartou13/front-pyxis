@@ -71,13 +71,10 @@ export default function ParametersPage() {
   return (
     <div className="flex min-h-full flex-1 flex-col gap-8 bg-slate-50 px-6 py-8 dark:bg-slate-950 sm:px-8">
       <div>
-        <p className="text-xs font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400">
-          Settings
-        </p>
-        <h1 className="mt-1 text-4xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
-          Parameters
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
+          ⚙️ Parameters
         </h1>
-        <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
+        <p className="mt-1 text-xs text-slate-600 dark:text-slate-400">
           Manage your preferences
         </p>
       </div>

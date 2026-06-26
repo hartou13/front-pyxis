@@ -119,10 +119,10 @@ export default function TransactionsPage() {
       <div className="animate-slide-up">
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-2">
           <div>
-            <h1 className="text-4xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
+            <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
               📋 Transactions
             </h1>
-            <p className="mt-2 text-lg text-slate-600 dark:text-slate-400">
+            <p className="mt-1 text-xs text-slate-600 dark:text-slate-400">
               All transactions from your Pyxis workspace
             </p>
           </div>
@@ -131,17 +131,15 @@ export default function TransactionsPage() {
               type="button"
               onClick={() => void load(currentPage, pageSize)}
               disabled={loading}
-              className="inline-flex items-center gap-2 rounded-xl border border-slate-300/50 dark:border-slate-700/50 bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm px-4 py-3 text-sm font-semibold text-slate-700 dark:text-slate-300 transition-all duration-300 hover:bg-white hover:shadow-md dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white/80 backdrop-blur-sm px-4 py-1.5 text-xs font-semibold text-slate-900 transition-all duration-300 ease-out hover:bg-slate-50 hover:shadow-md disabled:opacity-50 dark:border-slate-600 dark:bg-slate-900/80 dark:text-slate-100 dark:hover:bg-slate-800"
             >
-              <IconRefresh className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-              {loading ? "Refreshing…" : "Refresh"}
+              {loading ? "⟳ Refreshing…" : "↻ Refresh"}
             </button>
             <button
               type="button"
               onClick={() => setAddOpen(true)}
-              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 px-4 py-3 text-sm font-semibold text-white transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 dark:from-teal-600 dark:to-teal-700 dark:hover:from-teal-700 dark:hover:to-teal-800 elevation-2"
+              className="rounded-lg bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 px-4 py-1.5 text-xs font-semibold text-white transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-0.5 dark:from-teal-600 dark:to-teal-700 dark:hover:from-teal-700 dark:hover:to-teal-800"
             >
-              <IconPlus className="h-4 w-4" />
               Add Transaction
             </button>
           </div>
@@ -196,10 +194,9 @@ export default function TransactionsPage() {
           <button
             type="button"
             onClick={() => setAddOpen(true)}
-            className="mt-4 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 px-6 py-3 text-sm font-semibold text-white transition-all duration-300 hover:shadow-lg dark:from-teal-600 dark:to-teal-700"
+            className="mt-3 inline-block rounded-lg bg-gradient-to-r from-teal-500 to-teal-600 px-4 py-1.5 text-xs font-semibold text-white transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-0.5"
           >
-            <IconPlus className="h-4 w-4" />
-            Create First Transaction
+            + Add Transaction
           </button>
         </div>
       ) : null}

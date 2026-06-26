@@ -180,16 +180,13 @@ export default function WelcomePage() {
     date.setMonth(date.getMonth() - 1);
     return date.toISOString().split("T")[0];
   });
+  const [endDate, setEndDate] = useState(() => {
+    const date = new Date();
+    return date.toISOString().split("T")[0];
+  });
   const [evolution, setEvolution] = useState<SoldeEvolution | null>(null);
   const [evolutionError, setEvolutionError] = useState<string | null>(null);
   const [evolutionLoading, setEvolutionLoading] = useState(false);
-
-  // Get end date as tomorrow
-  const getEndDate = (): string => {
-    const date = new Date();
-    date.setDate(date.getDate() + 1);
-    return date.toISOString().split("T")[0];
-  };
 
   const loadBalances = useCallback(async () => {
     setLoading(true);
@@ -235,7 +232,7 @@ export default function WelcomePage() {
     setEvolutionError(null);
     try {
       const startISO = `${startDate}T00:00`;
-      const endISO = `${getEndDate()}T00:00`;
+      const endISO = `${endDate}T00:00`;
       const data = await fetchSoldeEvolution(startISO, endISO);
       if (data && typeof data === "object") {
         const evo = data as Record<string, unknown>;
@@ -270,7 +267,7 @@ export default function WelcomePage() {
     } finally {
       setEvolutionLoading(false);
     }
-  }, [startDate]);
+  }, [startDate, endDate]);
 
   const refreshSolde = useCallback(async () => {
     setRefreshing(true);
@@ -320,24 +317,24 @@ export default function WelcomePage() {
     evolution?.movement.reduce((sum, acc) => sum + (acc.solde?.balance ?? 0), 0) ?? 0;
 
   return (
-    <div className="flex min-h-full flex-1 flex-col gap-8 bg-gradient-to-br from-slate-50/80 via-white to-slate-50/40 px-6 py-8 dark:from-slate-950 dark:via-slate-900/50 dark:to-slate-950 sm:px-8">
+    <div className="flex min-h-full flex-1 flex-col gap-4 bg-gradient-to-br from-slate-50/80 via-white to-slate-50/40 px-4 py-4 dark:from-slate-950 dark:via-slate-900/50 dark:to-slate-950 sm:px-4">
       {/* Header - Hero Balance Card */}
       <div className="animate-fade-in">
-        <div className="group relative rounded-3xl bg-gradient-to-br from-white/80 to-white/60 dark:from-slate-900/80 dark:to-slate-900/60 backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50 p-8 sm:p-10 shadow-lg hover:shadow-2xl transition-all duration-300 ease-out overflow-hidden">
+        <div className="group relative rounded-2xl bg-gradient-to-br from-white/80 to-white/60 dark:from-slate-900/80 dark:to-slate-900/60 backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50 p-4 sm:p-5 shadow-lg hover:shadow-2xl transition-all duration-300 ease-out overflow-hidden">
           {/* Accent gradient background */}
           <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-teal-400/10 to-cyan-400/5 rounded-full blur-3xl -z-0 dark:from-teal-500/5 dark:to-cyan-500/2"></div>
 
-          <div className="relative z-10 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+          <div className="relative z-10 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div className="flex-1">
-              <p className="text-sm font-bold uppercase tracking-widest text-teal-700 dark:text-teal-400">
-                💰 Total Balance
+              <p className="text-xs font-bold uppercase tracking-widest text-slate-600 dark:text-slate-400">
+                Total Balance
               </p>
-              <h1 className="mt-3 text-5xl sm:text-6xl font-black tracking-tighter text-slate-900 dark:text-slate-50 font-mono">
+              <h1 className="mt-2 text-3xl sm:text-4xl font-black tracking-tighter text-slate-900 dark:text-slate-50 font-mono">
                 {formatCurrency(totalBalance)}
               </h1>
               {totalEvolution !== 0 && (
-                <p className="mt-4 text-base text-slate-600 dark:text-slate-400">
-                  <span className={`font-bold text-lg ${totalEvolution > 0 ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"}`}>
+                <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
+                  <span className={`font-bold text-base ${totalEvolution > 0 ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"}`}>
                     {totalEvolution > 0 ? "↑ +" : "↓ "}
                     {formatCurrency(totalEvolution)}
                   </span>
@@ -346,17 +343,17 @@ export default function WelcomePage() {
               )}
             </div>
 
-            <div className="flex flex-col gap-3 sm:flex-row">
+            <div className="flex flex-col gap-2 sm:flex-row">
               <button
                 type="button"
                 onClick={() => void refreshSolde()}
                 disabled={refreshing}
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 px-6 py-3 text-sm font-bold text-white transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed dark:from-teal-600 dark:to-teal-700 dark:hover:from-teal-700 dark:hover:to-teal-800"
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 px-4 py-2 text-xs font-bold text-white transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed dark:from-teal-600 dark:to-teal-700 dark:hover:from-teal-700 dark:hover:to-teal-800"
                 title="Refresh balance from server"
               >
                 {refreshing ? (
                   <>
-                    <span className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                    <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
                     <span>Refreshing…</span>
                   </>
                 ) : (
@@ -367,14 +364,25 @@ export default function WelcomePage() {
                 )}
               </button>
               <div className="flex flex-col">
-                <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1 uppercase tracking-wide">
-                  Period
+                <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-0.5 uppercase tracking-wide">
+                  Start Date
                 </label>
                 <input
                   type="date"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
-                  className="rounded-xl border border-slate-300 bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm px-4 py-2.5 text-sm font-medium text-slate-900 dark:text-slate-100 dark:border-slate-600 transition-all duration-300 ease-out focus-ring hover:border-teal-300 dark:hover:border-teal-700"
+                  className="rounded-lg border border-slate-300 bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm px-3 py-1.5 text-xs font-medium text-slate-900 dark:text-slate-100 dark:border-slate-600 transition-all duration-300 ease-out focus-ring hover:border-teal-300 dark:hover:border-teal-700"
+                />
+              </div>
+              <div className="flex flex-col">
+                <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-0.5 uppercase tracking-wide">
+                  End Date
+                </label>
+                <input
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  className="rounded-lg border border-slate-300 bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm px-3 py-1.5 text-xs font-medium text-slate-900 dark:text-slate-100 dark:border-slate-600 transition-all duration-300 ease-out focus-ring hover:border-teal-300 dark:hover:border-teal-700"
                 />
               </div>
             </div>
@@ -397,13 +405,13 @@ export default function WelcomePage() {
         <div className="grid gap-10">
           {/* Accounts Section */}
           <div className="animate-slide-up" style={{ animationDelay: "0.1s" }}>
-            <div className="mb-6 flex items-center justify-between">
+            <div className="mb-3 flex items-center justify-between">
               <div>
-                <h2 className="text-3xl font-bold text-slate-900 dark:text-slate-50">My Accounts</h2>
-                <p className="mt-1 text-slate-600 dark:text-slate-400">Monitor your financial positions</p>
+                <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-50">💰 Accounts</h2>
+                <p className="mt-0.5 text-xs text-slate-600 dark:text-slate-400">Monitor your financial positions</p>
               </div>
             </div>
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 stagger-items">
+            <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 stagger-items">
               {accounts.map((account) => {
                 const movementAccount = evolution?.movement.find((m) => m.id === account.id);
                 const evolution_value = movementAccount?.solde?.balance;
@@ -411,25 +419,25 @@ export default function WelcomePage() {
                   <button
                     key={account.id}
                     onClick={() => router.push(`/account/${account.id}`)}
-                    className="group relative rounded-2xl border border-slate-200/40 bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm p-6 text-left transition-all duration-300 ease-out hover-lift dark:border-slate-700/40 elevation-2 overflow-hidden"
+                    className="group relative rounded-lg border border-slate-200/40 bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm p-3 text-left transition-all duration-300 ease-out hover-lift dark:border-slate-700/40 elevation-2 overflow-hidden"
                   >
                     {/* Top accent bar */}
-                    <div className="absolute top-0 left-0 h-1.5 rounded-tl-2xl rounded-tr-2xl w-full bg-gradient-to-r from-teal-400 to-cyan-400 dark:from-teal-500 dark:to-cyan-500"></div>
+                    <div className="absolute top-0 left-0 h-1 rounded-tl-lg rounded-tr-lg w-full bg-gradient-to-r from-teal-400 to-cyan-400 dark:from-teal-500 dark:to-cyan-500"></div>
 
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex-1">
-                        <p className="text-xs font-bold uppercase tracking-widest text-teal-700 dark:text-teal-400">
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-bold uppercase tracking-widest text-teal-700 dark:text-teal-400 truncate">
                           {account.account_name}
                         </p>
-                        <p className="mt-2 text-3xl font-black text-slate-900 dark:text-slate-50 font-mono">
+                        <p className="mt-0.5 text-sm font-black text-slate-900 dark:text-slate-50 font-mono truncate">
                           {formatCurrency(account.solde?.remaining ?? 0)}
                         </p>
                       </div>
                       <AccountTypeBadge value={account.account_type} />
                     </div>
-                    <div className="flex items-center justify-between pt-4 border-t border-slate-100/50 dark:border-slate-700/50">
+                    <div className="flex items-center justify-between pt-2 border-t border-slate-100/50 dark:border-slate-700/50">
                       <TrendIndicator value={evolution_value} />
-                      <svg className="h-5 w-5 text-slate-400 transition group-hover:translate-x-1 group-hover:text-teal-600 dark:group-hover:text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5} aria-hidden>
+                      <svg className="h-4 w-4 text-slate-400 transition group-hover:translate-x-1 group-hover:text-teal-600 dark:group-hover:text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5} aria-hidden>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                       </svg>
                     </div>
@@ -440,36 +448,36 @@ export default function WelcomePage() {
           </div>
 
           {/* Income & Expense Grid */}
-          <div className="grid gap-10 lg:grid-cols-2">
+          <div className="grid gap-4 lg:grid-cols-2">
             {/* Income */}
             {evolution && evolution.income.length > 0 && (
               <div className="animate-slide-up" style={{ animationDelay: "0.2s" }}>
-                <div className="mb-6">
-                  <h3 className="text-2xl font-bold text-emerald-900 dark:text-emerald-50">📈 Income</h3>
-                  <p className="text-sm text-emerald-700/70 dark:text-emerald-400/70 mt-1">Money flowing in</p>
+                <div className="mb-3">
+                  <h3 className="text-lg font-bold text-emerald-900 dark:text-emerald-50">📈 Income</h3>
+                  <p className="text-xs text-emerald-700/70 dark:text-emerald-400/70 mt-0.5">Money flowing in</p>
                 </div>
-                <div className="space-y-3 stagger-items">
+                <div className="space-y-2 stagger-items">
                   {evolution.income.map((account) => (
                     <button
                       key={account.id}
                       onClick={() => router.push(`/account/${account.id}`)}
-                      className="group w-full rounded-xl border border-emerald-200/50 bg-emerald-50/50 dark:bg-emerald-950/20 dark:border-emerald-800/30 p-4 text-left transition-all duration-300 ease-out hover:bg-emerald-100/60 dark:hover:bg-emerald-950/40 hover:shadow-md hover:border-emerald-300 dark:hover:border-emerald-700"
+                      className="group w-full rounded-lg border border-emerald-200/50 bg-emerald-50/50 dark:bg-emerald-950/20 dark:border-emerald-800/30 p-1.5 text-left transition-all duration-300 ease-out hover:bg-emerald-100/60 dark:hover:bg-emerald-950/40 hover:shadow-md hover:border-emerald-300 dark:hover:border-emerald-700"
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex-1 min-w-0">
-                          <p className="font-semibold text-emerald-900 dark:text-emerald-100 truncate">{account.account_name}</p>
+                          <p className="text-sm font-semibold text-emerald-900 dark:text-emerald-100 truncate">{account.account_name}</p>
                           <p className="text-xs text-emerald-700/70 dark:text-emerald-400/70 mt-0.5">{account.account_type}</p>
                         </div>
-                        <p className="ml-3 font-bold text-emerald-600 dark:text-emerald-400 text-lg font-mono">
+                        <p className="ml-2 font-bold text-emerald-600 dark:text-emerald-400 text-sm font-mono">
                           +{formatCurrency(-(account.solde?.balance))}
                         </p>
                       </div>
                     </button>
                   ))}
-                  <div className="rounded-xl border-2 border-emerald-300/60 bg-gradient-to-br from-emerald-100/60 to-emerald-50/40 dark:from-emerald-900/40 dark:to-emerald-950/30 dark:border-emerald-700/40 p-4 mt-4">
+                  <div className="rounded-lg border-2 border-emerald-300/60 bg-gradient-to-br from-emerald-100/60 to-emerald-50/40 dark:from-emerald-900/40 dark:to-emerald-950/30 dark:border-emerald-700/40 p-3 mt-2">
                     <div className="flex items-center justify-between">
-                      <p className="font-bold text-emerald-900 dark:text-emerald-100 text-lg">Total Income</p>
-                      <p className="font-black text-emerald-600 dark:text-emerald-400 text-xl font-mono">
+                      <p className="font-bold text-emerald-900 dark:text-emerald-100 text-sm">Total Income</p>
+                      <p className="font-black text-emerald-600 dark:text-emerald-400 text-base font-mono">
                         +{formatCurrency(
                           -evolution.income.reduce((sum, acc) => sum + (acc.solde?.balance ?? 0), 0)
                         )}
@@ -483,32 +491,32 @@ export default function WelcomePage() {
             {/* Expense */}
             {evolution && evolution.expense.length > 0 && (
               <div className="animate-slide-up" style={{ animationDelay: "0.3s" }}>
-                <div className="mb-6">
-                  <h3 className="text-2xl font-bold text-rose-900 dark:text-rose-50">📉 Expenses</h3>
-                  <p className="text-sm text-rose-700/70 dark:text-rose-400/70 mt-1">Money flowing out</p>
+                <div className="mb-3">
+                  <h3 className="text-lg font-bold text-rose-900 dark:text-rose-50">📉 Expenses</h3>
+                  <p className="text-xs text-rose-700/70 dark:text-rose-400/70 mt-0.5">Money flowing out</p>
                 </div>
-                <div className="space-y-3 stagger-items">
+                <div className="space-y-2 stagger-items">
                   {evolution.expense.map((account) => (
                     <button
                       key={account.id}
                       onClick={() => router.push(`/account/${account.id}`)}
-                      className="group w-full rounded-xl border border-rose-200/50 bg-rose-50/50 dark:bg-rose-950/20 dark:border-rose-800/30 p-4 text-left transition-all duration-300 ease-out hover:bg-rose-100/60 dark:hover:bg-rose-950/40 hover:shadow-md hover:border-rose-300 dark:hover:border-rose-700"
+                      className="group w-full rounded-lg border border-rose-200/50 bg-rose-50/50 dark:bg-rose-950/20 dark:border-rose-800/30 p-1.5 text-left transition-all duration-300 ease-out hover:bg-rose-100/60 dark:hover:bg-rose-950/40 hover:shadow-md hover:border-rose-300 dark:hover:border-rose-700"
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex-1 min-w-0">
-                          <p className="font-semibold text-rose-900 dark:text-rose-100 truncate">{account.account_name}</p>
+                          <p className="text-sm font-semibold text-rose-900 dark:text-rose-100 truncate">{account.account_name}</p>
                           <p className="text-xs text-rose-700/70 dark:text-rose-400/70 mt-0.5">{account.account_type}</p>
                         </div>
-                        <p className="ml-3 font-bold text-rose-600 dark:text-rose-400 text-lg font-mono">
+                        <p className="ml-2 font-bold text-rose-600 dark:text-rose-400 text-sm font-mono">
                           {formatCurrency(account.solde?.balance)}
                         </p>
                       </div>
                     </button>
                   ))}
-                  <div className="rounded-xl border-2 border-rose-300/60 bg-gradient-to-br from-rose-100/60 to-rose-50/40 dark:from-rose-900/40 dark:to-rose-950/30 dark:border-rose-700/40 p-4 mt-4">
+                  <div className="rounded-lg border-2 border-rose-300/60 bg-gradient-to-br from-rose-100/60 to-rose-50/40 dark:from-rose-900/40 dark:to-rose-950/30 dark:border-rose-700/40 p-3 mt-2">
                     <div className="flex items-center justify-between">
-                      <p className="font-bold text-rose-900 dark:text-rose-100 text-lg">Total Expenses</p>
-                      <p className="font-black text-rose-600 dark:text-rose-400 text-xl font-mono">
+                      <p className="font-bold text-rose-900 dark:text-rose-100 text-sm">Total Expenses</p>
+                      <p className="font-black text-rose-600 dark:text-rose-400 text-base font-mono">
                         {formatCurrency(
                           evolution.expense.reduce((sum, acc) => sum + (acc.solde?.balance ?? 0), 0)
                         )}
@@ -521,17 +529,17 @@ export default function WelcomePage() {
           </div>
         </div>
       ) : loading && accounts === null ? (
-        <div className="flex items-center justify-center py-20 animate-fade-in">
-          <div className="flex flex-col items-center gap-4">
-            <div className="h-12 w-12 animate-spin rounded-full border-3 border-slate-300 border-t-teal-600 dark:border-slate-600 dark:border-t-teal-400"></div>
-            <p className="text-base text-slate-600 dark:text-slate-400 font-medium">Loading your finances…</p>
+        <div className="flex items-center justify-center py-10 animate-fade-in">
+          <div className="flex flex-col items-center gap-2">
+            <div className="h-8 w-8 animate-spin rounded-full border-2 border-slate-300 border-t-teal-600 dark:border-slate-600 dark:border-t-teal-400"></div>
+            <p className="text-sm text-slate-600 dark:text-slate-400 font-medium">Loading your finances…</p>
           </div>
         </div>
       ) : !loading && accounts && accounts.length === 0 ? (
-        <div className="rounded-2xl border-2 border-dashed border-slate-300 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/30 px-8 py-16 text-center animate-fade-in">
-          <div className="text-6xl mb-4">📭</div>
-          <p className="text-lg text-slate-600 dark:text-slate-400 font-medium">No accounts found</p>
-          <p className="text-sm text-slate-500 dark:text-slate-500 mt-2">Add your first account to get started</p>
+        <div className="rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/30 px-4 py-8 text-center animate-fade-in">
+          <div className="text-4xl mb-2">📭</div>
+          <p className="text-sm text-slate-600 dark:text-slate-400 font-medium">No accounts found</p>
+          <p className="text-xs text-slate-500 dark:text-slate-500 mt-1">Add your first account to get started</p>
         </div>
       ) : null}
     </div>

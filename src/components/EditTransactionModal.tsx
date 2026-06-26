@@ -3,6 +3,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { NumericInput } from "@/components/NumericInput";
+import { AccountCombobox } from "@/components/AccountCombobox";
 import { updateTransaction } from "@/lib/transactions-api";
 import { fetchAccounts, accountsResponseToList } from "@/lib/accounts-api";
 
@@ -255,58 +256,44 @@ export function EditTransactionModal({
                 <label className="block text-sm font-medium text-slate-900 dark:text-slate-100">
                   From Account *
                 </label>
-                <select
-                  required
-                  value={formData.from_account_id}
-                  onChange={(e) =>
-                    setFormData({ ...formData, from_account_id: e.target.value })
-                  }
-                  className="mt-1 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm transition focus:border-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:focus:border-slate-400 dark:focus:ring-slate-400"
-                >
-                  <option value="">Select an account</option>
-                  {fromAccountOptions.map((acc) => {
-                    const id = getAccountId(acc);
-                    const name =
+                <AccountCombobox
+                  accounts={fromAccountOptions.map((acc) => ({
+                    id: getAccountId(acc) || "",
+                    name:
                       getString(acc, "account_name") ||
                       getString(acc, "name") ||
-                      id ||
-                      "Unnamed";
-                    return (
-                      <option key={id} value={id}>
-                        {name}
-                      </option>
-                    );
-                  })}
-                </select>
+                      getAccountId(acc) ||
+                      "Unnamed",
+                  }))}
+                  value={formData.from_account_id}
+                  onChange={(id) =>
+                    setFormData({ ...formData, from_account_id: id })
+                  }
+                  placeholder="Search accounts..."
+                  required
+                />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-slate-900 dark:text-slate-100">
                   To Account *
                 </label>
-                <select
-                  required
-                  value={formData.to_account_id}
-                  onChange={(e) =>
-                    setFormData({ ...formData, to_account_id: e.target.value })
-                  }
-                  className="mt-1 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm transition focus:border-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:focus:border-slate-400 dark:focus:ring-slate-400"
-                >
-                  <option value="">Select an account</option>
-                  {toAccountOptions.map((acc) => {
-                    const id = getAccountId(acc);
-                    const name =
+                <AccountCombobox
+                  accounts={toAccountOptions.map((acc) => ({
+                    id: getAccountId(acc) || "",
+                    name:
                       getString(acc, "account_name") ||
                       getString(acc, "name") ||
-                      id ||
-                      "Unnamed";
-                    return (
-                      <option key={id} value={id}>
-                        {name}
-                      </option>
-                    );
-                  })}
-                </select>
+                      getAccountId(acc) ||
+                      "Unnamed",
+                  }))}
+                  value={formData.to_account_id}
+                  onChange={(id) =>
+                    setFormData({ ...formData, to_account_id: id })
+                  }
+                  placeholder="Search accounts..."
+                  required
+                />
               </div>
 
               <div>

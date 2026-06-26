@@ -170,8 +170,8 @@ function getAccountTypePalette(
 function MoveTypeChip({ value }: { value: string | undefined }) {
   const { palette, label, Icon } = getMoveTypePalette(value);
   return (
-    <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold ring-1 ring-inset transition-all duration-300 ease-out hover:shadow-md ${palette}`}>
-      {Icon && <Icon className="h-4 w-4" />}
+    <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold ring-1 ring-inset transition-all duration-300 ease-out hover:shadow-md ${palette}`}>
+      {Icon && <Icon className="h-3 w-3" />}
       {label}
     </span>
   );
@@ -180,8 +180,8 @@ function MoveTypeChip({ value }: { value: string | undefined }) {
 function AccountTypeChip({ value }: { value: string | undefined }) {
   const { palette, label, Icon } = getAccountTypePalette(value);
   return (
-    <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold ring-1 ring-inset transition-all duration-300 ease-out hover:shadow-md ${palette}`}>
-      {Icon && <Icon className="h-4 w-4" />}
+    <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold ring-1 ring-inset transition-all duration-300 ease-out hover:shadow-md ${palette}`}>
+      {Icon && <Icon className="h-3 w-3" />}
       {label}
     </span>
   );
@@ -215,11 +215,11 @@ function AccountCard({
 
   return (
     <article
-      className="group relative flex flex-col rounded-2xl border border-slate-200/40 bg-white/80 backdrop-blur-sm px-6 py-5 elevation-2 transition-all duration-300 ease-out hover-lift dark:border-slate-700/40 dark:bg-slate-900/60 animate-slide-up overflow-hidden"
+      className="group relative flex flex-col rounded-lg border border-slate-200/40 bg-white/80 backdrop-blur-sm px-2 py-2 elevation-2 transition-all duration-300 ease-out hover-lift dark:border-slate-700/40 dark:bg-slate-900/60 animate-slide-up overflow-hidden"
       style={{ animationDuration: '0.4s' }}
     >
       {/* Gradient accent bar - top */}
-      <div className={`absolute top-0 left-0 h-1.5 rounded-tl-2xl rounded-tr-2xl w-full bg-gradient-to-r ${
+      <div className={`absolute top-0 left-0 h-1 rounded-tl-lg rounded-tr-lg w-full bg-gradient-to-r ${
         moveType?.toLowerCase() === "income"
           ? "from-emerald-400 to-teal-500"
           : moveType?.toLowerCase() === "expense"
@@ -227,47 +227,47 @@ function AccountCard({
           : "from-sky-400 to-cyan-500"
       }`} />
 
-      <div className="flex items-start justify-between gap-3">
+      <div className="flex items-start justify-between gap-2">
         <div className="min-w-0 flex-1">
-          <h2 className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-50 group-hover:text-primary transition-colors">
+          <h4 className="text-sm font-bold tracking-tight text-slate-900 dark:text-slate-50 group-hover:text-primary transition-colors truncate">
             {name}
-          </h2>
+          </h4>
         </div>
-        <div className="flex shrink-0 gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="flex shrink-0 gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
           <button
             type="button"
             onClick={() => rowId && onView(rowId)}
             disabled={!rowId}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-slate-600 hover:bg-primary/10 hover:text-primary transition-all duration-300 ease-out disabled:cursor-not-allowed disabled:opacity-40 dark:text-slate-400 dark:hover:bg-primary/20 dark:hover:text-primary"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-slate-600 hover:bg-primary/10 hover:text-primary transition-all duration-300 ease-out disabled:cursor-not-allowed disabled:opacity-40 dark:text-slate-400 dark:hover:bg-primary/20 dark:hover:text-primary"
             aria-label="View details"
             title={rowId ? "View details" : "Missing account id"}
           >
-            <IconEye className="h-5 w-5" />
+            <IconEye className="h-4 w-4" />
           </button>
           <button
             type="button"
             onClick={() => onEdit(account)}
             disabled={!rowId}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-slate-600 hover:bg-amber-50 hover:text-amber-600 transition-all duration-300 ease-out disabled:cursor-not-allowed disabled:opacity-40 dark:text-slate-400 dark:hover:bg-amber-950/30 dark:hover:text-amber-400"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-slate-600 hover:bg-amber-50 hover:text-amber-600 transition-all duration-300 ease-out disabled:cursor-not-allowed disabled:opacity-40 dark:text-slate-400 dark:hover:bg-amber-950/30 dark:hover:text-amber-400"
             aria-label="Edit account"
             title={rowId ? "Edit account" : "Missing account id"}
           >
-            <IconPencil className="h-5 w-5" />
+            <IconPencil className="h-4 w-4" />
           </button>
           <button
             type="button"
             onClick={() => onDelete(account)}
             disabled={!rowId}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-slate-600 hover:bg-rose-50 hover:text-rose-600 transition-all duration-300 ease-out disabled:cursor-not-allowed disabled:opacity-40 dark:text-slate-400 dark:hover:bg-rose-950/30 dark:hover:text-rose-400"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-slate-600 hover:bg-rose-50 hover:text-rose-600 transition-all duration-300 ease-out disabled:cursor-not-allowed disabled:opacity-40 dark:text-slate-400 dark:hover:bg-rose-950/30 dark:hover:text-rose-400"
             aria-label="Delete account"
             title={rowId ? "Delete account" : "Missing account id"}
           >
-            <IconTrash className="h-5 w-5" />
+            <IconTrash className="h-4 w-4" />
           </button>
         </div>
       </div>
 
-      <div className="mt-4 flex flex-wrap items-center gap-2">
+      <div className="mt-2 flex flex-wrap items-center gap-1.5">
         <MoveTypeChip value={moveType} />
         <AccountTypeChip value={accType} />
       </div>
@@ -378,21 +378,21 @@ function AccountsContent() {
   );
 
   return (
-    <div className="flex min-h-full flex-1 flex-col gap-8 bg-gradient-to-br from-slate-50/50 via-white to-slate-50/30 px-6 py-8 dark:from-slate-950 dark:via-slate-900/50 dark:to-slate-950">
-      <div className="flex flex-wrap items-end justify-between gap-6 animate-fade-in">
+    <div className="flex min-h-full flex-1 flex-col gap-4 bg-gradient-to-br from-slate-50/50 via-white to-slate-50/30 px-4 py-4 dark:from-slate-950 dark:via-slate-900/50 dark:to-slate-950">
+      <div className="flex flex-wrap items-end justify-between gap-3 animate-fade-in">
         <div>
-          <h1 className="text-4xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
-            Accounts
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
+            💰 Accounts
           </h1>
-          <p className="mt-2 text-base text-slate-600 dark:text-slate-400">
+          <p className="mt-1 text-xs text-slate-600 dark:text-slate-400">
             Manage all your accounts in one place
           </p>
         </div>
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap gap-2">
           <button
             type="button"
             onClick={() => setAddOpen(true)}
-            className="rounded-lg bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 px-6 py-2.5 text-sm font-semibold text-white transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-0.5 dark:from-teal-600 dark:to-teal-700 dark:hover:from-teal-700 dark:hover:to-teal-800"
+            className="rounded-lg bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 px-4 py-1.5 text-xs font-semibold text-white transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-0.5 dark:from-teal-600 dark:to-teal-700 dark:hover:from-teal-700 dark:hover:to-teal-800"
           >
             + Add Account
           </button>
@@ -400,19 +400,19 @@ function AccountsContent() {
             type="button"
             onClick={() => void load()}
             disabled={loading}
-            className="rounded-lg border border-slate-300 bg-white/80 backdrop-blur-sm px-6 py-2.5 text-sm font-semibold text-slate-900 transition-all duration-300 ease-out hover:bg-slate-50 hover:shadow-md disabled:opacity-50 dark:border-slate-600 dark:bg-slate-900/80 dark:text-slate-100 dark:hover:bg-slate-800"
+            className="rounded-lg border border-slate-300 bg-white/80 backdrop-blur-sm px-4 py-1.5 text-xs font-semibold text-slate-900 transition-all duration-300 ease-out hover:bg-slate-50 hover:shadow-md disabled:opacity-50 dark:border-slate-600 dark:bg-slate-900/80 dark:text-slate-100 dark:hover:bg-slate-800"
           >
             {loading ? "⟳ Refreshing…" : "↻ Refresh"}
           </button>
         </div>
       </div>
 
-      <section aria-label="Filter accounts" className="flex flex-col gap-4 animate-slide-up" style={{ animationDelay: '0.1s' }}>
-        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-          <span className="text-sm font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">
+      <section aria-label="Filter accounts" className="flex flex-col gap-2 animate-slide-up" style={{ animationDelay: '0.1s' }}>
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+          <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">
             Transaction Type
           </span>
-          <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by move type">
+          <div className="flex flex-wrap gap-1.5" role="group" aria-label="Filter by move type">
             {[
               { value: null, label: "All" },
               { value: "income", label: "Income", Icon: IconIncome, color: "emerald" },
@@ -434,11 +434,11 @@ function AccountsContent() {
                   key={pill.value ?? "all"}
                   type="button"
                   onClick={() => setFilter("account_move_type", pill.value)}
-                  className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold ring-1 ring-inset transition-all duration-300 ease-out hover:shadow-md ${isActive ? activePalette : inactivePalette}`}
+                  className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ring-1 ring-inset transition-all duration-300 ease-out hover:shadow-md ${isActive ? activePalette : inactivePalette}`}
                   aria-pressed={isActive}
                   style={{ animationDelay: `${idx * 50}ms` }}
                 >
-                  {"Icon" in pill && pill.Icon && <pill.Icon className="h-4 w-4" />}
+                  {"Icon" in pill && pill.Icon && <pill.Icon className="h-3 w-3" />}
                   {pill.label}
                 </button>
               );
@@ -446,11 +446,11 @@ function AccountsContent() {
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-          <span className="text-sm font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+          <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">
             Account Type
           </span>
-          <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by account type">
+          <div className="flex flex-wrap gap-1.5" role="group" aria-label="Filter by account type">
             {[
               { value: null, label: "All" },
               { value: "external", label: "External", Icon: IconExternal, color: "amber" },
@@ -469,11 +469,11 @@ function AccountsContent() {
                   key={pill.value ?? "all"}
                   type="button"
                   onClick={() => setFilter("account_type", pill.value)}
-                  className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold ring-1 ring-inset transition-all duration-300 ease-out hover:shadow-md ${isActive ? activePalette : inactivePalette}`}
+                  className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ring-1 ring-inset transition-all duration-300 ease-out hover:shadow-md ${isActive ? activePalette : inactivePalette}`}
                   aria-pressed={isActive}
                   style={{ animationDelay: `${idx * 50}ms` }}
                 >
-                  {"Icon" in pill && pill.Icon && <pill.Icon className="h-4 w-4" />}
+                  {"Icon" in pill && pill.Icon && <pill.Icon className="h-3 w-3" />}
                   {pill.label}
                 </button>
               );
@@ -498,35 +498,35 @@ function AccountsContent() {
       />
 
       {error ? (
-        <div className="rounded-2xl border border-rose-300/50 bg-gradient-to-r from-rose-50 to-rose-50/50 px-6 py-4 text-base text-rose-900 dark:border-rose-900/50 dark:from-rose-950/30 dark:to-rose-950/20 dark:text-rose-200 elevation-1 animate-slide-up">
-          <div className="flex items-start gap-3">
-            <span className="text-xl">⚠</span>
+        <div className="rounded-lg border border-rose-300/50 bg-gradient-to-r from-rose-50 to-rose-50/50 px-4 py-2 text-sm text-rose-900 dark:border-rose-900/50 dark:from-rose-950/30 dark:to-rose-950/20 dark:text-rose-200 elevation-1 animate-slide-up">
+          <div className="flex items-start gap-2">
+            <span className="text-lg">⚠</span>
             <div>{error}</div>
           </div>
         </div>
       ) : null}
 
       {loading && accounts === null ? (
-        <div className="space-y-4 animate-fade-in">
-          <div className="h-32 rounded-2xl bg-gradient-to-br from-slate-200/50 to-slate-100/50 dark:from-slate-800/50 dark:to-slate-700/50 animate-shimmer"></div>
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="space-y-2 animate-fade-in">
+          <div className="h-16 rounded-lg bg-gradient-to-br from-slate-200/50 to-slate-100/50 dark:from-slate-800/50 dark:to-slate-700/50 animate-shimmer"></div>
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="h-48 rounded-2xl bg-gradient-to-br from-slate-200/50 to-slate-100/50 dark:from-slate-800/50 dark:to-slate-700/50 animate-shimmer"></div>
+              <div key={i} className="h-24 rounded-lg bg-gradient-to-br from-slate-200/50 to-slate-100/50 dark:from-slate-800/50 dark:to-slate-700/50 animate-shimmer"></div>
             ))}
           </div>
         </div>
       ) : null}
 
       {!loading && accounts && accounts.length === 0 ? (
-        <div className="rounded-2xl border-2 border-dashed border-slate-300 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/30 px-8 py-16 text-center animate-fade-in">
-          <div className="text-5xl mb-3">📭</div>
-          <p className="text-lg text-slate-600 dark:text-slate-400">
+        <div className="rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/30 px-4 py-8 text-center animate-fade-in">
+          <div className="text-3xl mb-2">📭</div>
+          <p className="text-sm text-slate-600 dark:text-slate-400">
             {moveTypeFilter || accountTypeFilter ? "No accounts match your filters" : "No accounts yet"}
           </p>
           {!moveTypeFilter && !accountTypeFilter && (
             <button
               onClick={() => setAddOpen(true)}
-              className="mt-4 inline-block rounded-lg bg-gradient-to-r from-teal-500 to-teal-600 px-6 py-2.5 text-sm font-semibold text-white transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-0.5"
+              className="mt-3 inline-block rounded-lg bg-gradient-to-r from-teal-500 to-teal-600 px-4 py-1.5 text-xs font-semibold text-white transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-0.5"
             >
               Create Your First Account
             </button>
@@ -535,7 +535,7 @@ function AccountsContent() {
       ) : null}
 
       {accounts && accounts.length > 0 ? (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 stagger-items">
+        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 stagger-items">
           {accounts.map((account) => (
             <AccountCard
               key={
@@ -558,8 +558,8 @@ export default function AccountsPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-full flex-1 flex-col gap-6 bg-slate-50 px-6 py-8 dark:bg-slate-950">
-          <p className="text-sm text-slate-500 dark:text-slate-400">Loading…</p>
+        <div className="flex min-h-full flex-1 flex-col gap-3 bg-slate-50 px-4 py-4 dark:bg-slate-950">
+          <p className="text-xs text-slate-500 dark:text-slate-400">Loading…</p>
         </div>
       }
     >
