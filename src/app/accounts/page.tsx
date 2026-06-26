@@ -2,7 +2,8 @@
 
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { Suspense, useCallback, useEffect, useState } from "react";
 import { AddAccountModal } from "@/components/AddAccountModal";
 import { EditAccountModal } from "@/components/EditAccountModal";
 import {
@@ -10,6 +11,19 @@ import {
   deleteAccount,
   fetchAccounts,
 } from "@/lib/accounts-api";
+
+type MoveTypeFilter = "income" | "expense" | "movement";
+type AccountTypeFilter = "external" | "personal";
+
+function parseMoveTypeFilter(v: unknown): MoveTypeFilter | null {
+  if (v === "income" || v === "expense" || v === "movement") return v;
+  return null;
+}
+
+function parseAccountTypeFilter(v: unknown): AccountTypeFilter | null {
+  if (v === "external" || v === "personal") return v;
+  return null;
+}
 
 function accountString(
   account: Record<string, unknown>,
@@ -84,71 +98,91 @@ function IconTrash({ className }: { className?: string }) {
   );
 }
 
-function IconUnknown({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} aria-hidden>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z" />
-    </svg>
-  );
+function moveTypeBorderClass(moveType: string | undefined): string {
+  const v = moveType?.toLowerCase().trim();
+  if (v === "income") return "border-l-emerald-500 dark:border-l-emerald-600";
+  if (v === "expense") return "border-l-rose-500 dark:border-l-rose-600";
+  if (v === "movement") return "border-l-sky-500 dark:border-l-sky-600";
+  return "border-l-slate-300 dark:border-l-slate-700";
 }
 
-function MoveTypeBadge({ value }: { value: string | undefined }) {
+function getMoveTypePalette(
+  value: string | undefined,
+): { palette: string; label: string; Icon: React.FC<{ className?: string }> | null } {
   const v = value?.toLowerCase().trim();
-  let Icon = IconUnknown;
-  let label = value ?? "Unknown";
-  let palette =
-    "bg-slate-100 text-slate-700 ring-slate-200/80 dark:bg-slate-800 dark:text-slate-200 dark:ring-slate-600/50";
   if (v === "income") {
-    Icon = IconIncome;
-    label = "Income";
-    palette =
-      "bg-emerald-100 text-emerald-800 ring-emerald-200/90 dark:bg-emerald-950/55 dark:text-emerald-300 dark:ring-emerald-700/50";
+    return {
+      palette:
+        "bg-emerald-100 text-emerald-800 ring-emerald-200/90 dark:bg-emerald-950/55 dark:text-emerald-300 dark:ring-emerald-700/50",
+      label: "Income",
+      Icon: IconIncome,
+    };
   } else if (v === "expense") {
-    Icon = IconExpense;
-    label = "Expense";
-    palette =
-      "bg-rose-100 text-rose-800 ring-rose-200/90 dark:bg-rose-950/50 dark:text-rose-300 dark:ring-rose-800/50";
+    return {
+      palette:
+        "bg-rose-100 text-rose-800 ring-rose-200/90 dark:bg-rose-950/50 dark:text-rose-300 dark:ring-rose-800/50",
+      label: "Expense",
+      Icon: IconExpense,
+    };
   } else if (v === "movement") {
-    Icon = IconMovement;
-    label = "Movement";
-    palette =
-      "bg-sky-100 text-sky-800 ring-sky-200/90 dark:bg-sky-950/50 dark:text-sky-300 dark:ring-sky-700/50";
+    return {
+      palette:
+        "bg-sky-100 text-sky-800 ring-sky-200/90 dark:bg-sky-950/50 dark:text-sky-300 dark:ring-sky-700/50",
+      label: "Movement",
+      Icon: IconMovement,
+    };
   }
+  return {
+    palette:
+      "bg-slate-100 text-slate-700 ring-slate-200/80 dark:bg-slate-800 dark:text-slate-200 dark:ring-slate-600/50",
+    label: value ?? "Unknown",
+    Icon: null,
+  };
+}
+
+function getAccountTypePalette(
+  value: string | undefined,
+): { palette: string; label: string; Icon: React.FC<{ className?: string }> } {
+  const v = value?.toLowerCase().trim();
+  if (v === "external") {
+    return {
+      palette:
+        "bg-amber-100 text-amber-900 ring-amber-200/90 dark:bg-amber-950/45 dark:text-amber-300 dark:ring-amber-800/45",
+      label: "External",
+      Icon: IconExternal,
+    };
+  } else if (v === "personal") {
+    return {
+      palette:
+        "bg-violet-100 text-violet-800 ring-violet-200/90 dark:bg-violet-950/50 dark:text-violet-300 dark:ring-violet-700/50",
+      label: "Personal",
+      Icon: IconPersonal,
+    };
+  }
+  return {
+    palette:
+      "bg-slate-100 text-slate-700 ring-slate-200/80 dark:bg-slate-800 dark:text-slate-200 dark:ring-slate-600/50",
+    label: "Unknown",
+    Icon: IconPersonal,
+  };
+}
+
+function MoveTypeChip({ value }: { value: string | undefined }) {
+  const { palette, label, Icon } = getMoveTypePalette(value);
   return (
-    <span
-      className={`inline-flex h-8 w-8 items-center justify-center rounded-lg ring-1 ring-inset ${palette}`}
-      title={`Move type: ${label}`}
-    >
-      <Icon className="h-4 w-4" />
-      <span className="sr-only">Move type: {label}</span>
+    <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset ${palette}`}>
+      {Icon && <Icon className="h-3.5 w-3.5" />}
+      {label}
     </span>
   );
 }
 
-function AccountTypeBadge({ value }: { value: string | undefined }) {
-  const v = value?.toLowerCase().trim();
-  let Icon = IconUnknown;
-  let label = value ?? "Unknown";
-  let palette =
-    "bg-slate-100 text-slate-700 ring-slate-200/80 dark:bg-slate-800 dark:text-slate-200 dark:ring-slate-600/50";
-  if (v === "external") {
-    Icon = IconExternal;
-    label = "External";
-    palette =
-      "bg-amber-100 text-amber-900 ring-amber-200/90 dark:bg-amber-950/45 dark:text-amber-300 dark:ring-amber-800/45";
-  } else if (v === "personal") {
-    Icon = IconPersonal;
-    label = "Personal";
-    palette =
-      "bg-violet-100 text-violet-800 ring-violet-200/90 dark:bg-violet-950/50 dark:text-violet-300 dark:ring-violet-700/50";
-  }
+function AccountTypeChip({ value }: { value: string | undefined }) {
+  const { palette, label, Icon } = getAccountTypePalette(value);
   return (
-    <span
-      className={`inline-flex h-8 w-8 items-center justify-center rounded-lg ring-1 ring-inset ${palette}`}
-      title={`Account type: ${label}`}
-    >
-      <Icon className="h-4 w-4" />
-      <span className="sr-only">Account type: {label}</span>
+    <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset ${palette}`}>
+      {Icon && <Icon className="h-3.5 w-3.5" />}
+      {label}
     </span>
   );
 }
@@ -180,7 +214,9 @@ function AccountCard({
   const rowId = accountRowId(account);
 
   return (
-    <article className="flex flex-col rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+    <article
+      className={`flex flex-col rounded-xl border border-l-4 border-slate-200 bg-white py-5 pl-4 pr-5 shadow-sm dark:border-slate-800 dark:bg-slate-900 ${moveTypeBorderClass(moveType)}`}
+    >
       <div className="flex items-start justify-between gap-3">
         <h2 className="min-w-0 flex-1 text-lg font-semibold tracking-tight text-slate-900 dark:text-slate-50">
           {name}
@@ -219,16 +255,17 @@ function AccountCard({
         </div>
       </div>
 
-      <div className="mt-4 flex items-center gap-2">
-        <MoveTypeBadge value={moveType} />
-        <AccountTypeBadge value={accType} />
+      <div className="mt-4 flex flex-wrap items-center gap-2">
+        <MoveTypeChip value={moveType} />
+        <AccountTypeChip value={accType} />
       </div>
     </article>
   );
 }
 
-export default function AccountsPage() {
+function AccountsContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [accounts, setAccounts] = useState<Record<string, unknown>[] | null>(
     null,
   );
@@ -240,11 +277,28 @@ export default function AccountsPage() {
     unknown
   > | null>(null);
 
+  const moveTypeFilter = parseMoveTypeFilter(searchParams.get("account_move_type"));
+  const accountTypeFilter = parseAccountTypeFilter(searchParams.get("account_type"));
+
+  function setFilter(key: "account_move_type" | "account_type", value: string | null) {
+    const next = new URLSearchParams(searchParams.toString());
+    if (value === null) {
+      next.delete(key);
+    } else {
+      next.set(key, value);
+    }
+    const qs = next.toString();
+    router.push(qs ? `/accounts?${qs}` : "/accounts", { scroll: false });
+  }
+
   const load = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const raw = await fetchAccounts();
+      const raw = await fetchAccounts({
+        account_move_type: moveTypeFilter ?? undefined,
+        account_type: accountTypeFilter ?? undefined,
+      });
       setAccounts(accountsResponseToList(raw));
     } catch (err) {
       if (axios.isAxiosError(err)) {
@@ -265,7 +319,7 @@ export default function AccountsPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [moveTypeFilter, accountTypeFilter]);
 
   useEffect(() => {
     void load();
@@ -341,6 +395,79 @@ export default function AccountsPage() {
         </div>
       </div>
 
+      <section aria-label="Filter accounts" className="flex flex-col gap-3">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="w-24 shrink-0 text-xs font-medium text-slate-500 dark:text-slate-400">
+            Move type
+          </span>
+          <div className="flex flex-wrap gap-1.5" role="group" aria-label="Filter by move type">
+            {[
+              { value: null, label: "All" },
+              { value: "income", label: "Income", Icon: IconIncome },
+              { value: "expense", label: "Expense", Icon: IconExpense },
+              { value: "movement", label: "Movement", Icon: IconMovement },
+            ].map((pill) => {
+              const isActive = moveTypeFilter === pill.value;
+              const inactivePalette = "bg-white text-slate-600 ring-1 ring-inset ring-slate-200 hover:bg-slate-50 dark:bg-slate-900 dark:text-slate-300 dark:ring-slate-700 dark:hover:bg-slate-800";
+              const activePalette = pill.value === null
+                ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
+                : pill.value === "income"
+                  ? "bg-emerald-100 text-emerald-800 ring-emerald-200/90 dark:bg-emerald-950/55 dark:text-emerald-300 dark:ring-emerald-700/50"
+                  : pill.value === "expense"
+                    ? "bg-rose-100 text-rose-800 ring-rose-200/90 dark:bg-rose-950/50 dark:text-rose-300 dark:ring-rose-800/50"
+                    : "bg-sky-100 text-sky-800 ring-sky-200/90 dark:bg-sky-950/50 dark:text-sky-300 dark:ring-sky-700/50";
+
+              return (
+                <button
+                  key={pill.value ?? "all"}
+                  type="button"
+                  onClick={() => setFilter("account_move_type", pill.value)}
+                  className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ring-1 ring-inset transition ${isActive ? activePalette : inactivePalette}`}
+                  aria-pressed={isActive}
+                >
+                  {"Icon" in pill && pill.Icon && <pill.Icon className="h-3.5 w-3.5" />}
+                  {pill.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="w-24 shrink-0 text-xs font-medium text-slate-500 dark:text-slate-400">
+            Account type
+          </span>
+          <div className="flex flex-wrap gap-1.5" role="group" aria-label="Filter by account type">
+            {[
+              { value: null, label: "All" },
+              { value: "external", label: "External", Icon: IconExternal },
+              { value: "personal", label: "Personal", Icon: IconPersonal },
+            ].map((pill) => {
+              const isActive = accountTypeFilter === pill.value;
+              const inactivePalette = "bg-white text-slate-600 ring-1 ring-inset ring-slate-200 hover:bg-slate-50 dark:bg-slate-900 dark:text-slate-300 dark:ring-slate-700 dark:hover:bg-slate-800";
+              const activePalette = pill.value === null
+                ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
+                : pill.value === "external"
+                  ? "bg-amber-100 text-amber-900 ring-amber-200/90 dark:bg-amber-950/45 dark:text-amber-300 dark:ring-amber-800/45"
+                  : "bg-violet-100 text-violet-800 ring-violet-200/90 dark:bg-violet-950/50 dark:text-violet-300 dark:ring-violet-700/50";
+
+              return (
+                <button
+                  key={pill.value ?? "all"}
+                  type="button"
+                  onClick={() => setFilter("account_type", pill.value)}
+                  className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ring-1 ring-inset transition ${isActive ? activePalette : inactivePalette}`}
+                  aria-pressed={isActive}
+                >
+                  {"Icon" in pill && pill.Icon && <pill.Icon className="h-3.5 w-3.5" />}
+                  {pill.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
       <AddAccountModal
         open={addOpen}
         onClose={() => setAddOpen(false)}
@@ -368,7 +495,7 @@ export default function AccountsPage() {
 
       {!loading && accounts && accounts.length === 0 ? (
         <p className="text-sm text-slate-600 dark:text-slate-400">
-          No accounts returned.
+          No accounts {moveTypeFilter || accountTypeFilter ? "match the active filters." : "returned."}
         </p>
       ) : null}
 
@@ -389,5 +516,19 @@ export default function AccountsPage() {
         </div>
       ) : null}
     </div>
+  );
+}
+
+export default function AccountsPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-full flex-1 flex-col gap-6 bg-slate-50 px-6 py-8 dark:bg-slate-950">
+          <p className="text-sm text-slate-500 dark:text-slate-400">Loading…</p>
+        </div>
+      }
+    >
+      <AccountsContent />
+    </Suspense>
   );
 }

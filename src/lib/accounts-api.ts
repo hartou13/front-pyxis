@@ -2,12 +2,24 @@ import { apiClient } from "@/lib/api-client";
 import { getSession } from "@/lib/session";
 
 /** GET /account — Bearer token, matches Pyxis Postman "get user accounts". */
-export async function fetchAccounts(): Promise<unknown> {
+export async function fetchAccounts(filters?: {
+  account_move_type?: string;
+  account_type?: string;
+}): Promise<unknown> {
   const session = getSession();
   if (!session) {
     throw new Error("Not authenticated");
   }
-  const { data } = await apiClient.get(`/account`, {
+  const params = new URLSearchParams();
+  if (filters?.account_move_type) {
+    params.append("account_move_type", filters.account_move_type);
+  }
+  if (filters?.account_type) {
+    params.append("account_type", filters.account_type);
+  }
+  const query = params.toString();
+  const url = query ? `/account?${query}` : `/account`;
+  const { data } = await apiClient.get(url, {
     headers: {
       Authorization: `Bearer ${session.token}`,
     },
