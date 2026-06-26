@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  pyxis-front:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_PYXIS_HOST=http://localhost:8001
+      - NODE_ENV=production
+    restart: unless-stopped
+    networks:
+      - pyxis-network
+
+networks:
+  pyxis-network:
+    driver: bridge
